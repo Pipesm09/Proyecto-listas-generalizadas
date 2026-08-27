@@ -3,20 +3,30 @@ package proyectolista;
 
 
 public class nodog {
-    private nodog li;
+    private boolean sw;
+    private nodog ligalista;
     private Object info;
-    private nodog ld;
+    private nodog liga;
 
     public nodog(Object info) {
         this.info = info;
+        
     }
 
-    public nodog getLi() {
-        return li;
+    public boolean isSw() {
+        return sw;
     }
 
-    public void setLi(nodog li) {
-        this.li = li;
+    public void setSw(boolean sw) {
+        this.sw = sw;
+    }
+
+    public nodog getLigalista() {
+        return ligalista;
+    }
+
+    public void setLigalista(nodog ligalista) {
+        this.ligalista = ligalista;
     }
 
     public Object getInfo() {
@@ -27,14 +37,13 @@ public class nodog {
         this.info = info;
     }
 
-    public nodog getLd() {
-        return ld;
+    public nodog getLiga() {
+        return liga;
     }
 
-    public void setLd(nodog ld) {
-        this.ld = ld;
+    public void setLiga(nodog liga) {
+        this.liga = liga;
     }
-    
     
     
     
