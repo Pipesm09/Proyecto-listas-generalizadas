@@ -1,36 +1,51 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package proyectolista;
 
-/**
- *
- * @author ASUS
- */
+
 public class Nodo {
-    private int dato;
+    private boolean sw;
+    private Nodo ligalista;
+    private Object info;
     private Nodo liga;
 
-    public Nodo(int dato) {
-        this.dato = dato;
-        liga = null;
+    public Nodo(Object info) {
+        this.info = info;
+        
     }
 
-    public int getDato() {
-        return dato;
+    public boolean isSw() {
+        return sw;
     }
 
-    public void setDato(int dato) {
-        this.dato = dato;
+    public void setSw(boolean sw) {
+        this.sw = sw;
     }
 
-    public Nodo getliga() {
+    public Nodo getLigalista() {
+        return ligalista;
+    }
+
+    public void setLigalista(Nodo ligalista) {
+        this.ligalista = ligalista;
+    }
+
+    public Object getInfo() {
+        return info;
+    }
+
+    public void setInfo(Object info) {
+        this.info = info;
+    }
+
+    public Nodo getLiga() {
         return liga;
     }
 
-    public void setliga(Nodo liga) {
+    public void setLiga(Nodo liga) {
         this.liga = liga;
     }
-            
+    
+    
+    
+    
 }
