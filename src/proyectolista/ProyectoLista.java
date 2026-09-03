@@ -1,42 +1,80 @@
 
 package proyectolista;
 
-import javax.swing.JOptionPane;
+import java.util.Scanner;
 
 public class ProyectoLista {
 
-
     public static void main(String[] args) {
-        int opc = 0;
+        Scanner scanner = new Scanner(System.in);
+        Nodo raiz = null;
+        int opcion = 0;
         
-        do{
-            opc = Menu();
-            switch (opc){
-                case 1: 
-                    break;
-                case 2: 
-                    break;
-                case 3:
-                    break;
-                case 4: 
-                    break;
-                case 0:
-                    System.out.println("Saliendo ...");
-                    break;
-                default:
-                    System.out.println("Opcion incorrecta");
+        do {
+            System.out.println("\n=============================================");
+            System.out.println("      MENÚ ÁRBOL GENEALÓGICO (N-ARIO)        ");
+            System.out.println("=============================================");
+            System.out.println("1. Ingresar/Cargar árbol genealógico");
+            System.out.println("2. Mostrar representación como Lista Generalizada (paréntesis)");
+            System.out.println("3. Visualizar Árbol jerárquico (sangría de generaciones)");
+            System.out.println("4. Salir");
+            System.out.print("Selecciona una opción: ");
+            
+            try {
+                opcion = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("\nError: Por favor ingresa un número válido.");
+                continue;
             }
-        } while(opc != 0);
-    }
-    public static int Menu() {
-        int opc = Integer.parseInt(JOptionPane.showInputDialog("****** Menu Principal ******\n"
-                + "1. Recorrido InOrden.\n"
-                + "2. Recorrido PreOrden\n"
-                + "3. Recorrido PosOrden\n"
-                + "4. Mostrar arbol completo.\n"
-                + "0. Salir.\n"
-                + "Ingrese una opcion\n"));
-
-        return opc;
+            
+            switch (opcion) {
+                case 1:
+                    System.out.println("\n--- INGRESAR ÁRBOL ---");
+                    System.out.println("Usa el formato: (Padre, (Hijo1, Nieto))");
+                    System.out.print("Entrada: ");
+                    String entrada = scanner.nextLine();
+                    
+                    raiz = listageneralizada.construirLista(entrada);
+                    if (raiz == null) {
+                        System.out.println("\n[ERROR] No se pudo construir el árbol. Verifica los paréntesis.");
+                    } else {
+                        System.out.println("\n[ÉXITO] Árbol genealógico cargado correctamente.");
+                    }
+                    break;
+                    
+                case 2:
+                    System.out.println("\n--- REPRESENTACIÓN COMO LISTA GENERALIZADA ---");
+                    if (raiz == null) {
+                        System.out.println("No hay ningún árbol cargado en memoria.");
+                    } else {
+                        System.out.print("Estructura: ");
+                        listageneralizada.imprimirComoLista(raiz);
+                        System.out.println(); // Salto de línea al final
+                    }
+                    break;
+                    
+                case 3:
+                    System.out.println("\n--- VISUALIZACIÓN JERÁRQUICA DEL ÁRBOL ---");
+                    if (raiz == null) {
+                        System.out.println("No hay ningún árbol cargado en memoria.");
+                    } else {
+                        listageneralizada.visualizarArbol(raiz, 0);
+                    }
+                    break;
+                    
+                case 4:
+                    System.out.println("\nSaliendo del programa...");
+                    break;
+                    
+                default:
+                    System.out.println("\nOpción no válida. Intenta de nuevo.");
+            }
+            
+        } while (opcion != 4);
+        
+        scanner.close();
     }
 }
+
+
+
