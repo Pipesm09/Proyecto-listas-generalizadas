@@ -1,7 +1,7 @@
 package proyectolista;
 
 public class listageneralizada {
-    
+
     private Nodo raiz;
 
     public Nodo getRaiz() {
@@ -11,70 +11,32 @@ public class listageneralizada {
     public void setRaiz(Nodo raiz) {
         this.raiz = null;
     }
-    
-    public static Nodo construirLista(String s){
-        int[] index = {0}; 
-        return construirLista(s, index);
+
+    public void construirArbolGenealogico(String cedula, String fechaNacimiento, String nombre) {
+
+        Persona persona = new Persona(cedula, fechaNacimiento, nombre);
+
+        Nodo nuevo = new Nodo(persona);
+
+        if (raiz == null) {
+            raiz = nuevo;
+        }
     }
-    
-    private static Nodo construirLista(String s, int[] index){
-        if(index[0] >= s.length() || s.charAt(index[0]) != '('){
-            return null;
+
+    public static void visualizarArbol(Nodo x, int nivel) {
+        if (x == null) {
+            return;
         }
-        index[0]++; // Saltar '('
-        
-        Nodo cabeza = null;
-        Nodo ultimo = null;
-        
-        while(index[0] < s.length() && s.charAt(index[0]) != ')'){
-            char actual = s.charAt(index[0]);
-            if(actual == ','){
-                index[0]++;
-                continue;
-            }
-            
-            Nodo nuevo;
-            if(actual == '('){
-                Nodo sublista = construirLista(s, index); 
-                
-                nuevo = new Nodo(null);       
-                nuevo.setSw(true);            
-                nuevo.setLigalista(sublista); 
-            }
-            else {
-                nuevo = new Nodo(actual);     
-                nuevo.setSw(false);           
-                index[0]++;
-            }
-            
-            if(cabeza == null){
-                cabeza = nuevo;
-                ultimo = nuevo;
-            }
-            else{
-                ultimo.setLiga(nuevo); 
-                ultimo = nuevo;
-            }
-        }
-        
-        if(index[0] < s.length() && s.charAt(index[0]) == ')'){
-            index[0]++;
-        }
-        
-        return cabeza;
-    }
-  public static void visualizarArbol(Nodo x, int nivel) {
-        if (x == null) return;
-                if (!x.isSw()) {
-            Persona p = (Persona) x.getInfo();
+        if (!x.isSw()) {
+            Persona p = x.getInfo();
             imprimirSangria(nivel);
             System.out.println("└── " + p.getNombre() + " (ID: " + p.getCedula() + ")");
         }
-        
+
         Nodo aux = x.getLiga();
         while (aux != null) {
             if (!aux.isSw()) {
-                Persona p = (Persona) aux.getInfo();
+                Persona p = aux.getInfo();
                 imprimirSangria(nivel + 1);
                 System.out.println("├── " + p.getNombre() + " (ID: " + p.getCedula() + ")");
             } else {
@@ -83,18 +45,19 @@ public class listageneralizada {
             aux = aux.getLiga();
         }
     }
-    
+
     private static void imprimirSangria(int nivel) {
         for (int i = 0; i < nivel; i++) {
-            System.out.print("    "); 
+            System.out.print("    ");
         }
     }
-     public static void imprimirComoLista(Nodo x) {
+
+    public static void imprimirComoLista(Nodo x) {
         if (x == null) {
             System.out.print("()");
             return;
         }
-        
+
         System.out.print("(");
         Nodo aux = x;
         while (aux != null) {
@@ -104,12 +67,68 @@ public class listageneralizada {
             } else {
                 imprimirComoLista(aux.getLigalista());
             }
-            
-            aux = aux.getLiga(); 
+
+            aux = aux.getLiga();
             if (aux != null) {
                 System.out.print(",");
             }
         }
         System.out.print(")");
+    }
+
+    public void registrarPersona(String cedula, String fechaNacimiento,
+            String nombre, String cedulaPadre) {
+
+        Persona persona = new Persona(cedula, fechaNacimiento, nombre);
+        Nodo nuevo = new Nodo(persona);
+        nuevo.setSw(false);
+
+        // Si todavía no existe la raíz
+        if (raiz == null) {
+            raiz = nuevo;
+            return;
+        }
+
+        // Buscar al padre/madre por su cédula
+        Nodo padre = buscarNodo(raiz, cedulaPadre);
+
+        if (padre == null) {
+            System.out.println("No se encontró la persona con esa cédula.");
+            return;
+        }
+
+        // Si el padre todavía no tiene hijos
+        if (padre.getLigalista() == null) {
+            padre.setLigalista(nuevo);
+        } else {
+            // Ir hasta el último hijo
+            Nodo aux = padre.getLigalista();
+
+            while (aux.getLiga() != null) {
+                aux = aux.getLiga();
+            }
+
+            aux.setLiga(nuevo);
+        }
+    }
+
+    public Nodo buscarNodo(Nodo actual, String cedula) {
+
+        if (actual == null) {
+            return null;
+        }
+
+        if (!actual.isSw()
+                && actual.getInfo().getCedula().equals(cedula)) {
+            return actual;
+        }
+
+        Nodo encontrado = buscarNodo(actual.getLigalista(), cedula);
+
+        if (encontrado != null) {
+            return encontrado;
+        }
+
+        return buscarNodo(actual.getLiga(), cedula);
     }
 }

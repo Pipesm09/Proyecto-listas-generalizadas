@@ -9,9 +9,11 @@ public class Nodo {
     private Nodo liga;
 
     public Nodo(Persona info) {
-        this.info = info;
-        
-    }
+    this.info = info;
+    this.sw = false;
+    this.ligalista = null;
+    this.liga = null;
+}
 
     public boolean isSw() {
         return sw;
