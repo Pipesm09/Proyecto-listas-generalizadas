@@ -2,6 +2,16 @@ package proyectolista;
 
 public class listageneralizada {
     
+    private Nodo raiz;
+
+    public Nodo getRaiz() {
+        return raiz;
+    }
+
+    public void setRaiz(Nodo raiz) {
+        this.raiz = null;
+    }
+    
     public static Nodo construirLista(String s){
         int[] index = {0}; 
         return construirLista(s, index);
