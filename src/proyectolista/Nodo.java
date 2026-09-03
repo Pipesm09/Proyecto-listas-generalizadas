@@ -5,10 +5,10 @@ package proyectolista;
 public class Nodo {
     private boolean sw;
     private Nodo ligalista;
-    private Object info;
+    private Persona info;
     private Nodo liga;
 
-    public Nodo(Object info) {
+    public Nodo(Persona info) {
         this.info = info;
         
     }
@@ -29,11 +29,11 @@ public class Nodo {
         this.ligalista = ligalista;
     }
 
-    public Object getInfo() {
+    public Persona getInfo() {
         return info;
     }
 
-    public void setInfo(Object info) {
+    public void setInfo(Persona info) {
         this.info = info;
     }
 
