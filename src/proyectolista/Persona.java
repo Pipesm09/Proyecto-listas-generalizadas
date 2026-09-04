@@ -1,12 +1,14 @@
 package proyectolista;
 
+import java.time.LocalDate;
+
 public class Persona {
 
     private String cedula;
-    private String fechaNacimiento;
+    private LocalDate fechaNacimiento;
     private String nombre;
 
-    public Persona(String cedula, String fechaNacimiento, String nombre) {
+    public Persona(String cedula, LocalDate fechaNacimiento, String nombre) {
         this.cedula = cedula;
         this.fechaNacimiento = fechaNacimiento;
         this.nombre = nombre;
@@ -20,8 +22,12 @@ public class Persona {
         return cedula;
     }
 
-    public String getFechaNacimiento() {
+    public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 
     public void setNombre(String nombre) {
@@ -31,9 +37,4 @@ public class Persona {
     public void setCedula(String cedula) {
         this.cedula = cedula;
     }
-
-    public void setFechaNacimiento(String fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
 }
