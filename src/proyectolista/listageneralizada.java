@@ -39,44 +39,42 @@ public class listageneralizada {
     public void registrarPersona(String cedula, String fechaNacimiento,
             String nombre, String cedulaPadre) {
 
-        //Configuración para la vuelta de las fechas de nacimiento
         DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
         LocalDate fecha = LocalDate.parse(fechaNacimiento, formato);
-        
-        // Guarda los datos ingresados en la clase persona
+
         Persona persona = new Persona(cedula, fecha, nombre);
-        // Y ahora los mete dentro del nodo del arbol
         Nodo nuevo = new Nodo(persona);
-        // Busca cual es el padre ingresado para ubicar el nodo
+
         Nodo padre = buscarNodo(raiz, cedulaPadre);
 
         if (padre == null) {
-            JOptionPane.showConfirmDialog(null,"No se encontró la persona.");
+            JOptionPane.showMessageDialog(null, "No se encontró al padre con cédula: " + cedulaPadre);
             return;
         }
 
-        // Si no tiene hijos
         if (padre.getLigalista() == null) {
             padre.setLigalista(nuevo);
             return;
         }
 
-        // Si la nueva persona es mayor que el primer hijo
-        if (fecha.isBefore(
-                padre.getLigalista().getInfo().getFechaNacimiento())) {
+        long cedulaNueva = Long.parseLong(cedula);
+        long cedulaPrimerHijo = Long.parseLong(padre.getLigalista().getInfo().getCedula());
 
-            nuevo.setLiga(padre.getLigalista());
-            padre.setLigalista(nuevo);
+        if (cedulaNueva < cedulaPrimerHijo) {
+            nuevo.setLiga(padre.getLigalista()); // El nuevo apunta al que antes era el primero
+            padre.setLigalista(nuevo);           // El padre ahora apunta al nuevo
             return;
         }
 
-        // Buscar dónde insertarla
         Nodo anterior = padre.getLigalista();
         Nodo actual = anterior.getLiga();
 
-        while (actual != null
-                && actual.getInfo().getFechaNacimiento().isBefore(fecha)) {
+        while (actual != null) {
+            long cedulaActual = Long.parseLong(actual.getInfo().getCedula());
+
+            if (cedulaNueva < cedulaActual) {
+                break; // Encontramos el punto donde debe ir insertado
+            }
 
             anterior = actual;
             actual = actual.getLiga();
