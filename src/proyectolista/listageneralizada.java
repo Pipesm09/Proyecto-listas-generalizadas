@@ -53,47 +53,31 @@ public class listageneralizada {
             return;
         }
 
-        // Buscamos si el padre ya tiene un nodo de sublista
-        Nodo sublista = padre.getLiga();
-
-        // Si no tiene sublista, la creamos
-        if (sublista == null) {
-
-            sublista = new Nodo();
-
-            // El nodo de sublista va conectado por LIGA al padre
-            padre.setLiga(sublista);
-
-            // El primer hijo se conecta por LIGALISTA
-            sublista.setLigalista(nuevo);
-
+        // Si el padre todavía no tiene hijos (su ligalista está vacío)
+        if (padre.getLigalista() == null) {
+            padre.setLigalista(nuevo);
             return;
         }
 
-        // El primer hijo está conectado mediante LIGALISTA
-        Nodo primerHijo = sublista.getLigalista();
+        // El primer hijo está directamente en la ligalista del padre
+        Nodo primerHijo = padre.getLigalista();
 
         long cedulaNueva = Long.parseLong(cedula);
-        long cedulaPrimerHijo
-                = Long.parseLong(primerHijo.getInfo().getCedula());
+        long cedulaPrimerHijo = Long.parseLong(primerHijo.getInfo().getCedula());
 
-        // Insertar como primer hijo
+        // Insertar como el nuevo primer hijo (si su cédula es menor)
         if (cedulaNueva < cedulaPrimerHijo) {
-
             nuevo.setLiga(primerHijo);
-            sublista.setLigalista(nuevo);
-
+            padre.setLigalista(nuevo);
             return;
         }
 
-        // Buscar posición entre los hermanos
+        // Buscar la posición correcta entre los hermanos usando la 'liga'
         Nodo anterior = primerHijo;
         Nodo actual = anterior.getLiga();
 
         while (actual != null) {
-
-            long cedulaActual
-                    = Long.parseLong(actual.getInfo().getCedula());
+            long cedulaActual = Long.parseLong(actual.getInfo().getCedula());
 
             if (cedulaNueva < cedulaActual) {
                 break;
@@ -405,33 +389,29 @@ public class listageneralizada {
          */
     }
 
-    public Nodo buscarPadre(Nodo actual, String cedula) {
-
+ public Nodo buscarPadre(Nodo actual, String cedula) {
         if (actual == null) {
             return null;
         }
 
-        if (!actual.isSw()) {
-
-            Nodo sublista = actual.getLiga();
-
-            if (sublista != null && sublista.isSw()) {
-
-                if (buscarEnSublista(sublista.getLigalista(), cedula)) {
-                    return actual;
-                }
+        // Revisamos si alguno de los hijos directos de 'actual' es la persona buscada
+        Nodo hijo = actual.getLigalista();
+        while (hijo != null) {
+            if (!hijo.isSw() && hijo.getInfo().getCedula().equals(cedula)) {
+                return actual; // ¡Encontramos al padre!
             }
+            hijo = hijo.getLiga(); // Saltamos al hermano
         }
 
+        // Si no está entre los hijos directos, buscamos recursivamente bajando por los hijos
         Nodo encontrado = buscarPadre(actual.getLigalista(), cedula);
-
         if (encontrado != null) {
             return encontrado;
         }
 
+        // Si no, buscamos por los hermanos
         return buscarPadre(actual.getLiga(), cedula);
     }
-
     public boolean buscarEnSublista(Nodo actual, String cedula) {
 
         Nodo aux = actual;
