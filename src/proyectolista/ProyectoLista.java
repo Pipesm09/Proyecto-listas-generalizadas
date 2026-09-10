@@ -45,7 +45,7 @@ public class ProyectoLista {
                         while (true) { //Este while es para que si el usuario pone mal la fecha, no tenga que volver a poner todos los datos de la persona :v
                             fechaNacimiento = JOptionPane.showInputDialog("Ingrese la fecha de nacimiento en formato (dd/MM/yyyy):"); //Registra datos de la persona
                             try { //Aquí hacemos try-catch en caso de que el usuario ingrese mal el formato de la fecha
-                                arbol.registrarRaiz(cedula, fechaNacimiento, nombre);
+                                arbol.registrarPersona(cedula, fechaNacimiento, nombre,cedulaPadre);
                                 JOptionPane.showMessageDialog(null, "Persona registrada correctamente.");
                                 break; 
                             } catch (DateTimeParseException e) {
