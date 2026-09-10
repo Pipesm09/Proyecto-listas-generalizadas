@@ -157,4 +157,26 @@ public class listageneralizada {
         System.out.print(")");
     }
 
+    public void actualizarPersona(String cedulaActual, String nuevoNombre, String nuevaCedula, String nuevaFechaNacimiento) {
+        Nodo nodoEcontrado = buscarNodo(raiz, cedulaActual);
+        if (nodoEcontrado == null) {
+            JOptionPane.showMessageDialog(null, "No se encontró ninguna persona con la cédula: " + cedulaActual);
+            return;
+        }
+        Persona persona = nodoEcontrado.getInfo();
+        if (nuevoNombre != null && !nuevoNombre.trim().isEmpty()) {
+            persona.setNombre(nuevoNombre);
+        }
+        if (nuevaFechaNacimiento != null && !nuevaFechaNacimiento.trim().isEmpty()) {
+            DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate nuevaFecha = LocalDate.parse(nuevaFechaNacimiento, formato);
+            persona.setFechaNacimiento(nuevaFecha);
+        }
+        if (nuevaCedula != null && !nuevaCedula.trim().isEmpty()) {
+            persona.setCedula(nuevaCedula);
+        }
+        JOptionPane.showMessageDialog(null, "¡Datos actualizados correctamente!");
+    }
+    
+
 }
