@@ -1,19 +1,27 @@
-
 package proyectolista;
 
-
 public class Nodo {
+
     private boolean sw;
     private Nodo ligalista;
     private Persona info;
     private Nodo liga;
 
+    //Constructor nodo de persona
     public Nodo(Persona info) {
-    this.info = info;
-    this.sw = false;
-    this.ligalista = null;
-    this.liga = null;
-}
+        this.info = info;
+        this.sw = false;
+        this.ligalista = null;
+        this.liga = null;
+    }
+
+    // constructor nodo de sublista
+    public Nodo() {
+        this.info = null;
+        this.sw = true;
+        this.ligalista = null;
+        this.liga = null;
+    }
 
     public boolean isSw() {
         return sw;
@@ -47,4 +55,3 @@ public class Nodo {
         this.liga = liga;
     }
 }
-    

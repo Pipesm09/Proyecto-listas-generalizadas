@@ -25,13 +25,13 @@ public class ProyectoLista {
                                 + " Introduce los datos de la primera persona para iniciar el árbol: ");
                         nombre = JOptionPane.showInputDialog("Introduzca el nombre de la persona: "); //Registra datos de la persona
                         cedula = JOptionPane.showInputDialog("Introduzca la cedula de la persona: "); //Registra datos de la persona
-
+                        
                         while (true) { //Este while es para que si el usuario pone mal la fecha, no tenga que volver a poner todos los datos de la persona :v
                             fechaNacimiento = JOptionPane.showInputDialog("Ingrese la fecha de nacimiento en formato (dd/MM/yyyy):"); //Registra datos de la persona
                             try { //Aquí hacemos try-catch en caso de que el usuario ingrese mal el formato de la fecha
                                 arbol.registrarRaiz(cedula, fechaNacimiento, nombre);
                                 JOptionPane.showMessageDialog(null, "Persona registrada correctamente.");
-                                break;
+                                break; 
                             } catch (DateTimeParseException e) {
                                 JOptionPane.showMessageDialog(null, "Fecha inválida. Use el formato dd/MM/yyyy."
                                 );
@@ -47,7 +47,7 @@ public class ProyectoLista {
                             try { //Aquí hacemos try-catch en caso de que el usuario ingrese mal el formato de la fecha
                                 arbol.registrarRaiz(cedula, fechaNacimiento, nombre);
                                 JOptionPane.showMessageDialog(null, "Persona registrada correctamente.");
-                                break;
+                                break; 
                             } catch (DateTimeParseException e) {
                                 JOptionPane.showMessageDialog(null, "Fecha inválida. Use el formato dd/MM/yyyy."
                                 );

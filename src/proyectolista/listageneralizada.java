@@ -48,32 +48,55 @@ public class listageneralizada {
         Nodo padre = buscarNodo(raiz, cedulaPadre);
 
         if (padre == null) {
-            JOptionPane.showMessageDialog(null, "No se encontró al padre con cédula: " + cedulaPadre);
+            JOptionPane.showMessageDialog(null,
+                    "No se encontró al padre con cédula: " + cedulaPadre);
             return;
         }
 
-        if (padre.getLigalista() == null) {
-            padre.setLigalista(nuevo);
+        // Buscamos si el padre ya tiene un nodo de sublista
+        Nodo sublista = padre.getLiga();
+
+        // Si no tiene sublista, la creamos
+        if (sublista == null) {
+
+            sublista = new Nodo();
+
+            // El nodo de sublista va conectado por LIGA al padre
+            padre.setLiga(sublista);
+
+            // El primer hijo se conecta por LIGALISTA
+            sublista.setLigalista(nuevo);
+
             return;
         }
+
+        // El primer hijo está conectado mediante LIGALISTA
+        Nodo primerHijo = sublista.getLigalista();
 
         long cedulaNueva = Long.parseLong(cedula);
-        long cedulaPrimerHijo = Long.parseLong(padre.getLigalista().getInfo().getCedula());
+        long cedulaPrimerHijo
+                = Long.parseLong(primerHijo.getInfo().getCedula());
 
+        // Insertar como primer hijo
         if (cedulaNueva < cedulaPrimerHijo) {
-            nuevo.setLiga(padre.getLigalista()); // El nuevo apunta al que antes era el primero
-            padre.setLigalista(nuevo);           // El padre ahora apunta al nuevo
+
+            nuevo.setLiga(primerHijo);
+            sublista.setLigalista(nuevo);
+
             return;
         }
 
-        Nodo anterior = padre.getLigalista();
+        // Buscar posición entre los hermanos
+        Nodo anterior = primerHijo;
         Nodo actual = anterior.getLiga();
 
         while (actual != null) {
-            long cedulaActual = Long.parseLong(actual.getInfo().getCedula());
+
+            long cedulaActual
+                    = Long.parseLong(actual.getInfo().getCedula());
 
             if (cedulaNueva < cedulaActual) {
-                break; // Encontramos el punto donde debe ir insertado
+                break;
             }
 
             anterior = actual;
@@ -253,7 +276,9 @@ public class listageneralizada {
     }
 
     private ResultadoBusqueda buscarNodoYPadre(Nodo padre, Nodo actual, String cedula) {
-        if (actual == null) return null;
+        if (actual == null) {
+            return null;
+        }
 
         if (!actual.isSw() && actual.getInfo().getCedula().equals(cedula)) {
             return new ResultadoBusqueda(actual, padre, null);
@@ -296,5 +321,132 @@ public class listageneralizada {
             aux.setLiga(hijoAMover.getLiga());
         }
     }
-}
 
+    public void consultarRelaciones(Nodo raiz, String cedula) {
+
+        Nodo persona = buscarNodo(raiz, cedula);
+
+        if (persona == null) {
+            System.out.println("La persona no existe.");
+            return;
+        }
+
+        System.out.println("\n===== RELACIONES FAMILIARES =====");
+        System.out.println("Persona consultada: "
+                + persona.getInfo().getNombre());
+        System.out.println("Cedula: "
+                + persona.getInfo().getCedula());
+        System.out.println("Fecha de nacimiento: "
+                + persona.getInfo().getFechaNacimiento());
+
+        // PADRE
+        Nodo padre = buscarPadre(raiz, cedula);
+
+        System.out.println("\nPADRE:");
+        if (padre != null) {
+            System.out.println(padre.getInfo().getNombre()
+                    + " - " + padre.getInfo().getCedula());
+        } else {
+            System.out.println("No tiene padre.");
+        }
+
+        /*
+        // HIJOS
+        System.out.println("\nHIJOS:");
+        mostrarHijos(persona);
+
+        // HERMANOS
+        System.out.println("\nHERMANOS:");
+        if (padre != null) {
+            mostrarHermanos(padre, cedula);
+        } else {
+            System.out.println("No tiene hermanos.");
+        }
+
+        // TIOS
+        System.out.println("\nTIOS:");
+        if (padre != null) {
+            Nodo abuelo = buscarPadre(raiz, padre.getInfo().getCedula());
+
+            if (abuelo != null) {
+                mostrarHermanos(abuelo, padre.getInfo().getCedula());
+            } else {
+                System.out.println("No tiene tios.");
+            }
+        } else {
+            System.out.println("No tiene tios.");
+        }
+
+        // SOBRINOS
+        System.out.println("\nSOBRINOS:");
+        mostrarSobrinos(raiz, persona, cedula);
+
+        // PRIMOS
+        System.out.println("\nPRIMOS:");
+        if (padre != null) {
+            Nodo abuelo = buscarPadre(raiz, padre.getInfo().getCedula());
+
+            if (abuelo != null) {
+                mostrarPrimos(abuelo, padre.getInfo().getCedula());
+            } else {
+                System.out.println("No tiene primos.");
+            }
+        } else {
+            System.out.println("No tiene primos.");
+        }
+
+        // ANCESTROS
+        System.out.println("\nANCESTROS:");
+        mostrarAncestros(raiz, cedula);
+
+        // DESCENDIENTES
+        System.out.println("\nDESCENDIENTES:");
+        mostrarDescendientes(persona);
+         */
+    }
+
+    public Nodo buscarPadre(Nodo actual, String cedula) {
+
+        if (actual == null) {
+            return null;
+        }
+
+        if (!actual.isSw()) {
+
+            Nodo sublista = actual.getLiga();
+
+            if (sublista != null && sublista.isSw()) {
+
+                if (buscarEnSublista(sublista.getLigalista(), cedula)) {
+                    return actual;
+                }
+            }
+        }
+
+        Nodo encontrado = buscarPadre(actual.getLigalista(), cedula);
+
+        if (encontrado != null) {
+            return encontrado;
+        }
+
+        return buscarPadre(actual.getLiga(), cedula);
+    }
+
+    public boolean buscarEnSublista(Nodo actual, String cedula) {
+
+        Nodo aux = actual;
+
+        while (aux != null) {
+
+            if (!aux.isSw()
+                    && aux.getInfo().getCedula().equals(cedula)) {
+                return true;
+            }
+
+            aux = aux.getLiga();
+        }
+
+        return false;
+    }
+
+}
