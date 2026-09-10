@@ -83,6 +83,16 @@ public class ProyectoLista {
 
                     arbol.consultarRelaciones(arbol.getRaiz(),cedula);
                     break;
+                    case 5:
+                    if (arbol.getRaiz() == null) {
+                        JOptionPane.showMessageDialog(null, "El árbol está vacío.");
+                    } else {
+                        cedula = JOptionPane.showInputDialog("Digite la cédula de la persona que desea eliminar:");
+                        
+                        // Llamamos al método de eliminación que construimos antes
+                        arbol.eliminarPersona(cedula);
+                    }
+                    break;
 
                 default:
                     System.out.println("\nOpción no válida. Intenta de nuevo.");
@@ -91,11 +101,13 @@ public class ProyectoLista {
 
     }
 
-    public static int Menu() {
+  public static int Menu() {
         int opc = Integer.parseInt(JOptionPane.showInputDialog("      MENÚ ÁRBOL GENEALÓGICO (N-ARIO)        \n"
-                + "1. Registrar miembros en el arbol \n"
+                + "1. Registrar miembros en el árbol \n"
                 + "2. Mostrar representación como Lista Generalizada \n"
                 + "3. Visualizar Árbol jerárquico \n"
+                + "4. Consultar Relaciones Familiares \n"
+                + "5. Eliminar persona (Conservando linaje)\n"
                 + "0. Salir\n"
                 + "Selecciona una opción: "));
 
