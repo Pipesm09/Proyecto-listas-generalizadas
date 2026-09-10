@@ -79,7 +79,9 @@ public class ProyectoLista {
                     break;
 
                 case 4:
-                    System.out.println("\nSaliendo del programa...");
+                    cedula = JOptionPane.showInputDialog("Digite la cédula de la persona:");
+
+                    arbol.consultarRelaciones(arbol.getRaiz(),cedula);
                     break;
 
                 default:
