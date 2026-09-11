@@ -334,11 +334,11 @@ public class listageneralizada {
             System.out.println("No tiene padre.");
         }
 
-        /*
         // HIJOS
         System.out.println("\nHIJOS:");
         mostrarHijos(persona);
 
+        
         // HERMANOS
         System.out.println("\nHERMANOS:");
         if (padre != null) {
@@ -346,7 +346,8 @@ public class listageneralizada {
         } else {
             System.out.println("No tiene hermanos.");
         }
-
+        
+        /*
         // TIOS
         System.out.println("\nTIOS:");
         if (padre != null) {
@@ -389,7 +390,7 @@ public class listageneralizada {
          */
     }
 
- public Nodo buscarPadre(Nodo actual, String cedula) {
+    public Nodo buscarPadre(Nodo actual, String cedula) {
         if (actual == null) {
             return null;
         }
@@ -412,6 +413,7 @@ public class listageneralizada {
         // Si no, buscamos por los hermanos
         return buscarPadre(actual.getLiga(), cedula);
     }
+
     public boolean buscarEnSublista(Nodo actual, String cedula) {
 
         Nodo aux = actual;
@@ -427,6 +429,90 @@ public class listageneralizada {
         }
 
         return false;
+    }
+
+    public void mostrarHijos(Nodo persona) {
+
+        Nodo sublista = persona.getLiga();
+
+        if (sublista == null || !sublista.isSw()) {
+            System.out.println("No tiene hijos.");
+            return;
+        }
+
+        Nodo hijo = sublista.getLigalista();
+
+        if (hijo == null) {
+            System.out.println("No tiene hijos.");
+            return;
+        }
+
+        while (hijo != null) {
+
+            if (!hijo.isSw()) {
+                System.out.println(
+                        "Nombre: " + hijo.getInfo().getNombre()
+                        + " | Cedula: " + hijo.getInfo().getCedula()
+                        + " | Fecha: " + hijo.getInfo().getFechaNacimiento()
+                );
+            }
+
+            hijo = hijo.getLiga();
+        }
+    }
+
+    public void mostrarHermanos(Nodo raiz, String cedula) {
+
+        // Primero buscamos a la persona por su cédula
+        Nodo persona = buscarNodo(raiz, cedula);
+
+        if (persona == null) {
+            System.out.println("La persona no existe.");
+            return;
+        }
+
+        // Buscamos el padre de la persona
+        Nodo padre = buscarPadre(raiz, cedula);
+
+        if (padre == null) {
+            System.out.println("La persona no tiene hermanos.");
+            return;
+        }
+
+        // La liga del padre lleva al nodo sw = true
+        Nodo sublista = padre.getLiga();
+
+        if (sublista == null || !sublista.isSw()) {
+            System.out.println("La persona no tiene hermanos.");
+            return;
+        }
+
+        // Ligalista lleva al primer hijo
+        Nodo hermano = sublista.getLigalista();
+
+        boolean tieneHermanos = false;
+
+        // Recorremos los hijos mediante liga
+        while (hermano != null) {
+
+            if (!hermano.isSw()
+                    && !hermano.getInfo().getCedula().equals(cedula)) {
+
+                System.out.println(
+                        "Nombre: " + hermano.getInfo().getNombre()
+                        + " | Cedula: " + hermano.getInfo().getCedula()
+                        + " | Fecha: " + hermano.getInfo().getFechaNacimiento()
+                );
+
+                tieneHermanos = true;
+            }
+
+            hermano = hermano.getLiga();
+        }
+
+        if (!tieneHermanos) {
+            System.out.println("La persona no tiene hermanos.");
+        }
     }
 
 }
