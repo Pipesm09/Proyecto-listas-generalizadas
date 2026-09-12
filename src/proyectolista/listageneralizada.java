@@ -476,5 +476,25 @@ public class listageneralizada {
             System.out.println("No tiene hermanos.");
         }
     }
+    //altura del arbol
+    public int obtenerAltura(Nodo actual){
+        //validacion para que desapile
+        if( actual == null){
+            return 0;
+        }
+        int maxAlturaHijos= 0;
+        Nodo hijo= actual.getLigalista();
+        //recorrer la lista rama por rana
+        while (hijo!= null){
+            if ( !hijo.isSw()){//esto indica que si el hijo NO es una sublista entonces
+                int alturahijo= obtenerAltura (hijo);
+                if(alturahijo>maxAlturaHijos){
+                    maxAlturaHijos= alturahijo; //actualiza en caso que el siguiente hijo sea mayor, asi recursivamente
+                }
+            }
+            hijo=hijo.getLiga(); //avanzar por los hermanos, verificando su altura
+        }
+        return 1+ maxAlturaHijos;
+    }
 
 }
