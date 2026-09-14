@@ -212,7 +212,7 @@ public class listageneralizada {
                 return;
             }
 
-            // Sub-caso B: La raíz tiene hijos. El hijo mayor asciende a ser la nueva Raíz.
+            // Subcaso B: La raíz tiene hijos. El hijo mayor asciende a ser la nueva Raíz.
             Nodo hijoMayor = encontrarHijoMayor(raiz.getLigalista());
 
             // Sacamos al hijo mayor de la lista horizontal de hermanos
@@ -229,7 +229,6 @@ public class listageneralizada {
             return;
         }
 
-        // Buscamos al padre del nodo que queremos eliminar para poder modificar su enlace 'ligalista' o 'liga'
         ResultadoBusqueda resultado = buscarNodoYPadre(null, raiz, cedulaAEliminar);
 
         if (resultado == null || resultado.nodoAEliminar == null) {

@@ -172,6 +172,16 @@ public class ProyectoLista {
                         }
                     }
                     break;
+                    case 12: // Trasladar Rama (Adopción)
+                    if (arbol.getRaiz() == null) {
+                        JOptionPane.showMessageDialog(null, "El árbol está vacío.");
+                    } else {
+                        String cedulaA = JOptionPane.showInputDialog("Digite la cédula de la persona (A) que será trasladada con su descendencia:");
+                        String cedulaB = JOptionPane.showInputDialog("Digite la cédula de la persona (B) que será el nuevo padre adoptivo:");
+                        
+                        arbol.trasladarRama(cedulaA, cedulaB);
+                    }
+                    break;
 
                 case 0:
                     System.out.println("Saliendo del programa...");
