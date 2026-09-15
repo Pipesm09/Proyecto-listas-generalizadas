@@ -625,7 +625,7 @@ public class listageneralizada {
     }
 
     //Familiar mas joven 
-    private Nodo encontrarMasJoven(Nodo actual, Nodo masJovenActual) {
+    public Nodo encontrarMasJoven(Nodo actual, Nodo masJovenActual) {
         if (actual == null) {
             return masJovenActual; //para desapilar
         }
@@ -681,7 +681,7 @@ public class listageneralizada {
     }
 
     //registros por nivel: imprime o recolecta a todas las personas de un nivel
-    public void mostrarRegsitroPorNivel(Nodo actual, int nivelBuscado, int nivelActual) {
+    public void mostrarRegistroPorNivel(Nodo actual, int nivelBuscado, int nivelActual) {
         if (actual == null) {
             return;
         }
@@ -692,10 +692,10 @@ public class listageneralizada {
         }
         //parametros para bajar hasta dar con el nivel
         if (nivelActual < nivelBuscado) {
-            mostrarRegsitroPorNivel(actual.getLigalista(), nivelBuscado, nivelActual + 1);
+            mostrarRegistroPorNivel(actual.getLigalista(), nivelBuscado, nivelActual + 1);
         }
         //busca ahora por sus hermanos
-        mostrarRegsitroPorNivel(actual.getLiga(), nivelBuscado, nivelActual);
+        mostrarRegistroPorNivel(actual.getLiga(), nivelBuscado, nivelActual);
     }
     //Nodo con mayor nivel
     //variables globles pa no tener que crear otros metodos

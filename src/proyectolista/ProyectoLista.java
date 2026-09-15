@@ -122,7 +122,7 @@ public class ProyectoLista {
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
                     } else {
-                        Nodo joven = arbol.encontrarFamiliarMasJoven(arbol.getRaiz(), null);
+                        Nodo joven = arbol.encontrarMasJoven(arbol.getRaiz(), null);
                         if (joven != null) {
                             JOptionPane.showMessageDialog(null, "Familiar mas joven:\n" +
                                     "Nombre: " + joven.getInfo().getNombre() + "\n" +
@@ -154,7 +154,7 @@ public class ProyectoLista {
                         String nivelStr = JOptionPane.showInputDialog("Ingrese el numero de nivel (generacion) que desea consultar:");
                         int nBuscado = Integer.parseInt(nivelStr);
                         System.out.println("\n--- PERSONAS EN EL NIVEL " + nBuscado + " ---");
-                        arbol.mostrarRegistrosPorNivel(arbol.getRaiz(), nBuscado, 1);
+                        arbol.mostrarRegistroPorNivel(arbol.getRaiz(), nBuscado, 1);
                         System.out.println("----------------------------------------");
                         JOptionPane.showMessageDialog(null, "Consulta de registros por nivel impresa en la consola");
                     }
