@@ -348,7 +348,7 @@ public class listageneralizada {
         // TIOS
         System.out.println("\nTIOS:");
         mostrarTios(raiz, cedula);
-        
+
         // SOBRINOS
         System.out.println("\nSOBRINOS:");
         mostrarSobrinos(persona);
@@ -552,7 +552,7 @@ public class listageneralizada {
             System.out.println("No tiene tios.");
         }
     }
-    
+
     //Esta vaina esta re mala ome
     public void mostrarSobrinos(Nodo persona) {
 
@@ -603,6 +603,222 @@ public class listageneralizada {
             hijo = hijo.getLiga(); //avanzar por los hermanos, verificando su altura
         }
         return 1 + maxAlturaHijos;
+    }
+
+    //nivel de un registro
+    public int obtenerNivel(Nodo actual, String cedula, int nivelActual) {
+        if (actual == null) {
+            return -1; //para desapilar
+        }
+        if (!actual.isSw() && actual.getInfo().getCedula().equals(cedula)) {
+            //si no es una sublista y la cedula de este nodo= a la cedula buscada
+            return nivelActual;
+        }
+        int nivelEnHijos = obtenerNivel(actual.getLigalista(), cedula, nivelActual + 1);
+        //baja por la sublista para ver su nivel
+        if (nivelEnHijos != -1) {
+            //si ya bajo y todavia hay hijos
+            return nivelEnHijos;
+        }
+        //si ya bajo, deberia de ir por sus hermanos para ver si tienen mas nivel
+        return obtenerNivel(actual.getLiga(), cedula, nivelActual);
+    }
+
+    //Familiar mas joven 
+    private Nodo encontrarMasJoven(Nodo actual, Nodo masJovenActual) {
+        if (actual == null) {
+            return masJovenActual; //para desapilar
+        }
+        //toca ver entre TODO el arbol para ver quien es el que tiene menos edad, para eso el actual
+        if (!actual.isSw()) {
+            if (masJovenActual == null) {
+                masJovenActual = actual;
+            } else {
+                //hace que se compare el actual sea MENOR que el masJovenActual
+                if (actual.getInfo().getFechaNacimiento().isAfter(masJovenActual.getInfo().getFechaNacimiento())) {
+                    masJovenActual = actual;
+                }
+            }
+        }
+        //buscar entre las sublistas
+        masJovenActual = encontrarMasJoven(actual.getLigalista(), masJovenActual);
+        return masJovenActual;
+    }
+    //Nodo con mayor grado, padre con mas hijos xd
+    //variables globales, porque que pereza hacer otros metodos
+    private Nodo nodoMaxGrado = null;
+    private int mayorCantidadHijos = -1;
+
+    private void calcularNodoMayorGrado(Nodo actual) {
+        if (actual == null) {
+            return;
+        }
+        if (!actual.isSw()) {
+            //contar hijos directos
+            int hijosDirectos = 0;
+            Nodo h = actual.getLigalista(); // se para en el primer hijo
+            while (h != null) {
+                if (!h.isSw()) {
+                    hijosDirectos++;
+                    h = h.getLiga();//cuenta solo las que NO son sublista
+                }
+            }
+            if (hijosDirectos > mayorCantidadHijos) {
+                mayorCantidadHijos = hijosDirectos;
+                nodoMaxGrado = actual;
+            }
+        }
+        calcularNodoMayorGrado(actual.getLigalista());
+        calcularNodoMayorGrado(actual.getLiga());
+    }
+
+    //metodo para ordenar eso
+    public Nodo getNodoMayorGrado() {
+        nodoMaxGrado = null;
+        mayorCantidadHijos = -1;
+        calcularNodoMayorGrado(raiz);
+        return nodoMaxGrado;
+    }
+
+    //registros por nivel: imprime o recolecta a todas las personas de un nivel
+    public void mostrarRegsitroPorNivel(Nodo actual, int nivelBuscado, int nivelActual) {
+        if (actual == null) {
+            return;
+        }
+        if (!actual.isSw()) {
+            if (nivelActual == nivelBuscado) {
+                System.out.println("- " + actual.getInfo().getNombre() + " (Cedula: " + actual.getInfo().getCedula() + ")");
+            }
+        }
+        //parametros para bajar hasta dar con el nivel
+        if (nivelActual < nivelBuscado) {
+            mostrarRegsitroPorNivel(actual.getLigalista(), nivelBuscado, nivelActual + 1);
+        }
+        //busca ahora por sus hermanos
+        mostrarRegsitroPorNivel(actual.getLiga(), nivelBuscado, nivelActual);
+    }
+    //Nodo con mayor nivel
+    //variables globles pa no tener que crear otros metodos
+    private int maxProfundidadEncontrada = -1;
+    private Nodo nodoMasProfundo = null;
+
+    private void encontrarNodoMayorNivel(Nodo actual, int profundidadActual) {
+        if (actual == null) {
+            return;
+        }
+
+        if (!actual.isSw()) {
+            if (profundidadActual > maxProfundidadEncontrada) {
+                maxProfundidadEncontrada = profundidadActual;
+                nodoMasProfundo = actual;
+            }
+        }
+        //baja por las sublistas primero, luego por sus hermanos
+        encontrarNodoMayorNivel(actual.getLigalista(), profundidadActual + 1);
+        encontrarNodoMayorNivel(actual.getLiga(), profundidadActual);
+    }
+
+    public Nodo getNodoMayorNivel() {
+        maxProfundidadEncontrada = -1;
+        nodoMasProfundo = null;
+        encontrarNodoMayorNivel(raiz, 1);
+        return nodoMasProfundo;
+    }
+
+    public void trasladarRama(String cedulaA, String cedulaB) {
+        //vadilaciones, para ver que no sean igual
+        if (cedulaA.equals(cedulaB)) {
+            JOptionPane.showMessageDialog(null, "La persona A y la persona B no pueden ser la misma.");
+            return;
+        }
+        if (raiz != null && raiz.getInfo().getCedula().equals(cedulaA)) {
+            JOptionPane.showMessageDialog(null, "No se puede trasladar al ancestro principal (Raíz) del arbol.");
+            return;
+        }
+        //buscar si existe el nodo B
+        Nodo nodoB = buscarNodo(raiz, cedulaB);
+        if (nodoB == null) {
+            JOptionPane.showMessageDialog(null, "No se encontró a la persona B (destino) con cédula: " + cedulaB);
+            return;
+        }
+        //buscar a A, su padre y su hermano anterior para desconectarlos de A
+        ResultadoBusqueda resultadoA = buscarNodoYPadre(null, raiz, cedulaA);
+        if (resultadoA == null || resultadoA.nodoAEliminar == null) {
+            JOptionPane.showMessageDialog(null, "No se encontro a la persona A (a trasladar) con cédula: " + cedulaA);
+            return;
+        }
+        Nodo nodoA = resultadoA.nodoAEliminar;
+        Nodo padreActualA = resultadoA.padreDirecto;
+        Nodo hermanoAnteriorA = resultadoA.hermanoAnterior;
+
+        //verificar que B no sea decendiente de A (ni el hijos, ni sobrinos, etc)
+        if (esDescendiente(nodoA, cedulaB)) {
+            JOptionPane.showMessageDialog(null, "Error: B es decendiente de A, por ende no se puede adoptar a A");
+            return;
+        }
+        //se desconecta A de su padre y hermanos sin mover ligalista de A para que este no pierda su decendencia 
+        if (padreActualA != null && padreActualA.getLigalista() == nodoA) {
+            padreActualA.setLigalista(nodoA.getLiga());
+        } else if (hermanoAnteriorA != null) {
+            hermanoAnteriorA.setLiga(nodoA.getLiga());
+        }
+        //limpiamos a A para NO llevar a sus hermanos
+        nodoA.setLiga(null);
+        long cedulaANueva = Long.parseLong(nodoA.getInfo().getCedula());
+        if (nodoB.getLigalista() == null) {
+            nodoB.setLigalista(nodoA);
+            JOptionPane.showMessageDialog(null, "¡Rama trasladada con éxito!");
+            return;
+        }
+        //Ahora si todo salio bien xd, enlazar a A como hijo de B mediante su cedula y las cedulas de los hijos de B (si tiene)
+        Nodo primerHijoB = nodoB.getLigalista();
+        long cedulaPrimerHijoB = Long.parseLong(primerHijoB.getInfo().getCedula());
+        if (cedulaANueva < cedulaPrimerHijoB) {
+            nodoA.setLiga(primerHijoB);
+            nodoB.setLigalista(nodoA);
+            JOptionPane.showMessageDialog(null, "¡Rama trasladada con éxito!");
+            return;
+        }
+
+        // Buscar la posición correcta entre los hijos de B ordenados por cédula
+        Nodo anterior = primerHijoB;
+        Nodo actual = anterior.getLiga();
+
+        while (actual != null) {
+            long cedulaActual = Long.parseLong(actual.getInfo().getCedula());
+            if (cedulaANueva < cedulaActual) {
+                break;
+            }
+            anterior = actual;
+            actual = actual.getLiga();
+        }
+
+        nodoA.setLiga(actual);
+        anterior.setLiga(nodoA);
+
+        JOptionPane.showMessageDialog(null, "¡Rama trasladada con éxito!");
+    }
+            
+
+    private boolean esDescendiente(Nodo actual, String cedulaBuscada) {
+        if (actual == null) {
+            return false;
+        }
+
+        Nodo hijo = actual.getLigalista();
+        while (hijo != null) {
+            if (!hijo.isSw()) {
+                if (hijo.getInfo().getCedula().equals(cedulaBuscada)) {
+                    return true;
+                }
+                // Revisar recursivamente en la descendencia de este hijo
+                if (esDescendiente(hijo, cedulaBuscada)) {
+                    return true;
+                }
+            }
+            hijo = hijo.getLiga();
+        }
+        return false;
     }
 
 }
