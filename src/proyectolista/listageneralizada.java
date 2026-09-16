@@ -315,22 +315,18 @@ public class listageneralizada {
         }
 
         System.out.println("\n===== RELACIONES FAMILIARES =====");
-        System.out.println("Persona consultada: "
-                + persona.getInfo().getNombre());
-        System.out.println("Cedula: "
-                + persona.getInfo().getCedula());
-        System.out.println("Fecha de nacimiento: "
-                + persona.getInfo().getFechaNacimiento());
+        System.out.println("Persona consultada: " + persona.getInfo().getNombre());
+        System.out.println("Cédula: " + persona.getInfo().getCedula());
+        System.out.println("Fecha de nacimiento: " + persona.getInfo().getFechaNacimiento());
 
         // PADRE
         Nodo padre = buscarPadre(raiz, cedula);
 
         System.out.println("\nPADRE:");
         if (padre != null) {
-            System.out.println(padre.getInfo().getNombre()
-                    + " - " + padre.getInfo().getCedula());
+            System.out.println("- " + padre.getInfo().getNombre() + " (Cédula: " + padre.getInfo().getCedula() + ")");
         } else {
-            System.out.println("No tiene padre.");
+            System.out.println("No tiene padre registrado (Es el ancestro principal).");
         }
 
         // HIJOS
@@ -342,7 +338,7 @@ public class listageneralizada {
         if (padre != null) {
             mostrarHermanos(padre, cedula);
         } else {
-            System.out.println("No tiene hermanos.");
+            System.out.println("No tiene hermanos (no hay padre registrado).");
         }
 
         // TIOS
@@ -352,19 +348,18 @@ public class listageneralizada {
         // SOBRINOS
         System.out.println("\nSOBRINOS:");
         mostrarSobrinos(persona);
-        /*
+
         // PRIMOS
         System.out.println("\nPRIMOS:");
         if (padre != null) {
             Nodo abuelo = buscarPadre(raiz, padre.getInfo().getCedula());
-
             if (abuelo != null) {
                 mostrarPrimos(abuelo, padre.getInfo().getCedula());
             } else {
-                System.out.println("No tiene primos.");
+                System.out.println("No tiene primos registrados (no hay abuelo).");
             }
         } else {
-            System.out.println("No tiene primos.");
+            System.out.println("No tiene primos registrados (no hay padre).");
         }
 
         // ANCESTROS
@@ -374,7 +369,6 @@ public class listageneralizada {
         // DESCENDIENTES
         System.out.println("\nDESCENDIENTES:");
         mostrarDescendientes(persona);
-         */
     }
 
     public Nodo buscarPadre(Nodo actual, String cedula) {
@@ -382,23 +376,35 @@ public class listageneralizada {
             return null;
         }
 
-        // Revisamos si alguno de los hijos directos de 'actual' es la persona buscada
-        Nodo hijo = actual.getLigalista();
-        while (hijo != null) {
-            if (!hijo.isSw() && hijo.getInfo().getCedula().equals(cedula)) {
-                return actual; // ¡Encontramos al padre!
+        Nodo aux = actual;
+
+        // Acá vamos a buscar entre todos los hermanos del nivel
+        while (aux != null) {
+
+            // Si encontramos un nodo con sw = true, buscamos entre sus hijos
+            if (aux.isSw()) {
+                Nodo hijo = aux.getLigalista();
+
+                // Buscamos si uno de sus hijos es al que le estamos buscando el señor padre
+                while (hijo != null) {
+                    if (hijo.getInfo().getCedula().equals(cedula)) {
+                        return aux; // Si encuentra al papa devuelve el Nodo donde esta parado el puntero
+                    }
+                    hijo = hijo.getLiga(); // Sino pues sigue revisando los otros hijos de la misma sublista
+                }
+
+                // Si no está en los hijos directos, toca buscar en los nietos y ubica los punteros en el siguiente nivel
+                Nodo encontrado = buscarPadre(aux.getLigalista(), cedula);
+                if (encontrado != null) {
+                    return encontrado;
+                }
             }
-            hijo = hijo.getLiga(); // Saltamos al hermano
+
+            // Si no estaba por esa rama, nos vamos al siguiente hermano del nivel a verle los hijos
+            aux = aux.getLiga();
         }
 
-        // Si no está entre los hijos directos, buscamos recursivamente bajando por los hijos
-        Nodo encontrado = buscarPadre(actual.getLigalista(), cedula);
-        if (encontrado != null) {
-            return encontrado;
-        }
-
-        // Si no, buscamos por los hermanos
-        return buscarPadre(actual.getLiga(), cedula);
+        return null;
     }
 
     public void mostrarPadre(String cedula) {
@@ -415,136 +421,112 @@ public class listageneralizada {
             System.out.println("Nombre: " + padre.getInfo().getNombre()
                     + " | Cédula: " + padre.getInfo().getCedula());
         } else {
-            System.out.println("Es el ancestro principal (No tiene padre).");
+            System.out.println("Es el ancestro principal (No tiene padre registrado).");
         }
     }
 
     public boolean buscarEnSublista(Nodo actual, String cedula) {
-
         Nodo aux = actual;
-
         while (aux != null) {
-
-            if (!aux.isSw()
-                    && aux.getInfo().getCedula().equals(cedula)) {
+            // Ya no se niega el SW, cualquier nodo en la lista es una persona válida
+            if (aux.getInfo().getCedula().equals(cedula)) {
                 return true;
             }
-
             aux = aux.getLiga();
         }
-
         return false;
     }
 
     public void mostrarHijos(Nodo persona) {
-        Nodo hijo = persona.getLigalista();
-        if (hijo == null) {
+        // Verificamos que la persona tenga hijos con sw o ligalista
+        if (!persona.isSw() || persona.getLigalista() == null) {
             System.out.println("No tiene hijos.");
             return;
         }
+
+        Nodo hijo = persona.getLigalista();
+        // Pasamos por todos los nodos de la sublista y los mostramos
         while (hijo != null) {
-            if (!hijo.isSw()) {
-                System.out.println("- " + hijo.getInfo().getNombre() + " (Cédula: " + hijo.getInfo().getCedula() + ")");
-            }
+            System.out.println("- " + hijo.getInfo().getNombre() + " (Cédula: " + hijo.getInfo().getCedula() + ")");
             hijo = hijo.getLiga();
         }
     }
 
     public void mostrarHijosAux(Nodo persona) {
-        Nodo hijo = persona.getLigalista();
-        while (hijo != null) {
-            if (!hijo.isSw()) {
+        if (persona.isSw()) {
+            Nodo hijo = persona.getLigalista();
+            while (hijo != null) {
                 System.out.println("- " + hijo.getInfo().getNombre() + " (Cédula: " + hijo.getInfo().getCedula() + ")");
+                hijo = hijo.getLiga();
             }
-            hijo = hijo.getLiga();
         }
     }
 
     public void mostrarHermanos(Nodo padre, String cedulaConsultada) {
+        if (padre == null || !padre.isSw()) {
+            System.out.println("No tiene hermanos.");
+            return;
+        }
+
+        // Los hermanos de la persona son los hijos de su padre
         Nodo hermano = padre.getLigalista();
         boolean hay = false;
+
         while (hermano != null) {
-            if (!hermano.isSw() && !hermano.getInfo().getCedula().equals(cedulaConsultada)) {
+            // Se muestra a todos excepto a la persona consultada
+            if (!hermano.getInfo().getCedula().equals(cedulaConsultada)) {
                 System.out.println("- " + hermano.getInfo().getNombre() + " (Cédula: " + hermano.getInfo().getCedula() + ")");
                 hay = true;
             }
             hermano = hermano.getLiga();
         }
+
         if (!hay) {
             System.out.println("No tiene hermanos.");
         }
     }
 
-    //Este metodo va a ser pa que esa consola no suelte mensajes del metodo mostrar hermanos :v
     public Nodo buscarHermanos(Nodo padre, String cedula) {
-
-        if (padre == null) {
+        if (padre == null || !padre.isSw()) {
             return null;
         }
 
-        Nodo sublista = padre.getLiga();
-
-        if (sublista == null || !sublista.isSw()) {
-            return null;
-        }
-
-        Nodo hermano = sublista.getLigalista();
+        Nodo hermano = padre.getLigalista();
 
         while (hermano != null) {
-
-            if (!hermano.isSw()
-                    && !hermano.getInfo().getCedula().equals(cedula)) {
-
+            if (!hermano.getInfo().getCedula().equals(cedula)) {
                 return hermano;
             }
-
             hermano = hermano.getLiga();
         }
 
         return null;
     }
 
-    //Este metodo tiene toda la logica pa los tios, porque queda desorganizado poner todo esto en el principañ
     public void mostrarTios(Nodo raiz, String cedula) {
-
         Nodo padre = buscarPadre(raiz, cedula);
-
         if (padre == null) {
-            System.out.println("No tiene tios.");
+            System.out.println("No tiene tios registrados (no se halló el padre).");
             return;
         }
 
         Nodo abuelo = buscarPadre(raiz, padre.getInfo().getCedula());
-
-        if (abuelo == null) {
-            System.out.println("No tiene tios.");
+        if (abuelo == null || !abuelo.isSw()) {
+            System.out.println("No tiene tios registrados (no se halló el abuelo).");
             return;
         }
 
-        Nodo sublista = abuelo.getLiga();
-
-        if (sublista == null || !sublista.isSw()) {
-            System.out.println("No tiene tios.");
-            return;
-        }
-
-        Nodo tio = sublista.getLigalista();
+        // Los tios son los hijos del abuelo (excluyendo al padre)
+        Nodo tio = abuelo.getLigalista();
         boolean tieneTios = false;
 
         while (tio != null) {
-
-            if (!tio.isSw()
-                    && !tio.getInfo().getCedula().equals(padre.getInfo().getCedula())) {
-
-                System.out.println(
-                        "Nombre: " + tio.getInfo().getNombre()
+            if (!tio.getInfo().getCedula().equals(padre.getInfo().getCedula())) {
+                System.out.println("- Nombre: " + tio.getInfo().getNombre()
                         + " | Cedula: " + tio.getInfo().getCedula()
-                        + " | Fecha: " + tio.getInfo().getFechaNacimiento()
-                );
-
+                        + " | Fecha: " + tio.getInfo().getFechaNacimiento());
                 tieneTios = true;
             }
-
             tio = tio.getLiga();
         }
 
@@ -553,34 +535,109 @@ public class listageneralizada {
         }
     }
 
-    //Esta vaina esta re mala ome
     public void mostrarSobrinos(Nodo persona) {
-
+        // Asumiendo que 'raiz' es un atributo global de la clase
         Nodo padre = buscarPadre(raiz, persona.getInfo().getCedula());
 
-        if (padre == null) {
-            System.out.println("No tiene hermanos.");
+        if (padre == null || !padre.isSw()) {
+            System.out.println("No tiene sobrinos (no tiene hermanos registrados).");
             return;
         }
 
-        Nodo sublista = padre.getLiga();
-
-        if (sublista == null || !sublista.isSw()) {
-            System.out.println("No tiene hermanos.");
-            return;
-        }
-
-        Nodo hermano = sublista.getLigalista();
+        Nodo hermano = padre.getLigalista();
+        boolean tieneSobrinos = false;
 
         while (hermano != null) {
+            // Solo miramos a los hermanos (excluimos a la propia persona)
+            if (!hermano.getInfo().getCedula().equals(persona.getInfo().getCedula())) {
 
-            if (!hermano.isSw()
-                    && !hermano.getInfo().getCedula().equals(persona.getInfo().getCedula())) {
+                // Si el hermano tiene hijos (switch en true), iteramos sus hijos
+                if (hermano.isSw()) {
+                    Nodo sobrino = hermano.getLigalista();
+                    while (sobrino != null) {
+                        System.out.println("- " + sobrino.getInfo().getNombre()
+                                + " (Cédula: " + sobrino.getInfo().getCedula() + ") "
+                                + "[Hijo(a) de " + hermano.getInfo().getNombre() + "]");
+                        tieneSobrinos = true;
+                        sobrino = sobrino.getLiga();
+                    }
+                }
+            }
+            hermano = hermano.getLiga();
+        }
 
-                mostrarHijos(hermano);
+        if (!tieneSobrinos) {
+            System.out.println("No tiene sobrinos.");
+        }
+    }
+
+    // ====================================================
+    // MÉTODOS ADICIONALES (Primos, Ancestros, Descendientes)
+    // ====================================================
+    public void mostrarPrimos(Nodo abuelo, String cedulaPadre) {
+        if (abuelo == null || !abuelo.isSw()) {
+            return;
+        }
+
+        Nodo tio = abuelo.getLigalista();
+        boolean hayPrimos = false;
+
+        while (tio != null) {
+            // Buscamos hijos en los tíos (omitimos al padre de la persona)
+            if (!tio.getInfo().getCedula().equals(cedulaPadre)) {
+                if (tio.isSw()) {
+                    Nodo primo = tio.getLigalista();
+                    while (primo != null) {
+                        System.out.println("- " + primo.getInfo().getNombre() + " (Cédula: " + primo.getInfo().getCedula() + ")");
+                        hayPrimos = true;
+                        primo = primo.getLiga();
+                    }
+                }
+            }
+            tio = tio.getLiga();
+        }
+
+        if (!hayPrimos) {
+            System.out.println("No tiene primos.");
+        }
+    }
+
+    public void mostrarAncestros(Nodo raiz, String cedula) {
+        Nodo actual = buscarPadre(raiz, cedula);
+        if (actual == null) {
+            System.out.println("No hay ancestros registrados para esta persona.");
+            return;
+        }
+
+        while (actual != null) {
+            System.out.println("- " + actual.getInfo().getNombre() + " (Cédula: " + actual.getInfo().getCedula() + ")");
+            actual = buscarPadre(raiz, actual.getInfo().getCedula());
+        }
+    }
+
+    public void mostrarDescendientes(Nodo persona) {
+        if (!persona.isSw() || persona.getLigalista() == null) {
+            System.out.println("No tiene descendientes.");
+            return;
+        }
+        mostrarDescendientesRecursivo(persona.getLigalista(), 1);
+    }
+
+    private void mostrarDescendientesRecursivo(Nodo actual, int nivel) {
+        while (actual != null) {
+            // Creamos un espaciado para representar el árbol visualmente
+            String espacio = "";
+            for (int i = 0; i < nivel; i++) {
+                espacio += "  ";
             }
 
-            hermano = hermano.getLiga();
+            System.out.println(espacio + "- " + actual.getInfo().getNombre() + " (Cédula: " + actual.getInfo().getCedula() + ")");
+
+            // Si tiene hijos, llamamos recursivamente aumentando el nivel visual
+            if (actual.isSw()) {
+                mostrarDescendientesRecursivo(actual.getLigalista(), nivel + 1);
+            }
+            actual = actual.getLiga();
         }
     }
 
@@ -798,7 +855,6 @@ public class listageneralizada {
 
         JOptionPane.showMessageDialog(null, "¡Rama trasladada con éxito!");
     }
-            
 
     private boolean esDescendiente(Nodo actual, String cedulaBuscada) {
         if (actual == null) {
