@@ -876,5 +876,47 @@ public class listageneralizada {
         }
         return false;
     }
+    
+    public void ancestroComunMasCercano(Nodo raiz, String cedula1, String cedula2) {
+        Nodo persona1 = buscarNodo(raiz, cedula1);
+        Nodo persona2 = buscarNodo(raiz, cedula2);
+
+        // Verificamos que las 2 personas si existan :v
+        if (persona1 == null || persona2 == null) {
+            System.out.println("Error: Una o ambas cédulas no existen en el árbol genealógico.");
+            return;
+        }
+
+        // Empezamos asumiendo que el ancestro a evaluar es la persona 1 misma
+        Nodo ancestro1 = persona1;
+
+        // Ciclo externo: Sube por el linaje de la persona 1
+        while (ancestro1 != null) {
+            
+            // Para cada nivel de la persona 1, evaluamos a la persona 2 desde abajo hacia arriba
+            Nodo ancestro2 = persona2;
+
+            // Ciclo interno: Sube por el linaje de la persona 2
+            while (ancestro2 != null) {
+                
+                // Si en algún momento son la misma persona, ¡encontramos la intersección!
+                if (ancestro1.getInfo().getCedula().equals(ancestro2.getInfo().getCedula())) {
+                    System.out.println("\nEl ancestro común más cercano entre " + persona1.getInfo().getNombre() + 
+                                       " y " + persona2.getInfo().getNombre() + " es:");
+                    System.out.println("-> " + ancestro1.getInfo().getNombre() + " (Cédula: " + ancestro1.getInfo().getCedula() + ")");
+                    return; // Terminamos el método aquí porque ya hallamos el más cercano
+                }
+                
+                // Subimos un nivel en la familia de la persona 2 (buscamos a su padre)
+                ancestro2 = buscarPadre(raiz, ancestro2.getInfo().getCedula());
+            }
+            
+            // Subimos un nivel en la familia de la persona 1 (buscamos a su padre)
+            ancestro1 = buscarPadre(raiz, ancestro1.getInfo().getCedula());
+        }
+
+        // Si los ciclos terminan y no hubo coincidencias (raro si todos vienen de la misma raíz)
+        System.out.println("No tienen ningún ancestro en común.");
+    }
 
 }
