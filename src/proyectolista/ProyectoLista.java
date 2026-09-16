@@ -21,15 +21,15 @@ public class ProyectoLista {
                 case 1:
                     if (arbol.getRaiz() == null) { // Valida si el árbol ya tiene raíz
                         JOptionPane.showMessageDialog(null, "No se encontraron registros guardados.\nIntroduce los datos de la primera persona para iniciar el arbol:");
-                        nombre = JOptionPane.showInputDialog("Introduzca el nombre de la persona: "); 
-                        cedula = JOptionPane.showInputDialog("Introduzca la cedula de la persona: "); 
-                        
-                        while (true) { 
-                            fechaNacimiento = JOptionPane.showInputDialog("Ingrese la fecha de nacimiento en formato (dd/MM/yyyy):"); 
-                            try { 
+                        nombre = JOptionPane.showInputDialog("Introduzca el nombre de la persona: ");
+                        cedula = JOptionPane.showInputDialog("Introduzca la cedula de la persona: ");
+
+                        while (true) {
+                            fechaNacimiento = JOptionPane.showInputDialog("Ingrese la fecha de nacimiento en formato (dd/MM/yyyy):");
+                            try {
                                 arbol.registrarRaiz(cedula, fechaNacimiento, nombre);
                                 JOptionPane.showMessageDialog(null, "Persona registrada correctamente.");
-                                break; 
+                                break;
                             } catch (DateTimeParseException e) {
                                 JOptionPane.showMessageDialog(null, "Fecha invalida. Use el formato dd/MM/yyyy.");
                             }
@@ -39,12 +39,12 @@ public class ProyectoLista {
                         cedula = JOptionPane.showInputDialog("Introduzca la cedula de la persona: ");
                         cedulaPadre = JOptionPane.showInputDialog("Introduzca la cedula del padre de la persona: ");
 
-                        while (true) { 
-                            fechaNacimiento = JOptionPane.showInputDialog("Ingrese la fecha de nacimiento en formato (dd/MM/yyyy):"); 
-                            try { 
+                        while (true) {
+                            fechaNacimiento = JOptionPane.showInputDialog("Ingrese la fecha de nacimiento en formato (dd/MM/yyyy):");
+                            try {
                                 arbol.registrarPersona(cedula, fechaNacimiento, nombre, cedulaPadre);
                                 JOptionPane.showMessageDialog(null, "Persona registrada correctamente.");
-                                break; 
+                                break;
                             } catch (DateTimeParseException e) {
                                 JOptionPane.showMessageDialog(null, "Fecha invalida. Use el formato dd/MM/yyyy.");
                             }
@@ -60,7 +60,7 @@ public class ProyectoLista {
                     } else {
                         System.out.print("Estructura: ");
                         listageneralizada.imprimirComoLista(arbol.getRaiz());
-                        System.out.println(); 
+                        System.out.println();
                     }
                     break;
 
@@ -124,10 +124,10 @@ public class ProyectoLista {
                     } else {
                         Nodo joven = arbol.encontrarMasJoven(arbol.getRaiz(), null);
                         if (joven != null) {
-                            JOptionPane.showMessageDialog(null, "Familiar mas joven:\n" +
-                                    "Nombre: " + joven.getInfo().getNombre() + "\n" +
-                                    "Cedula: " + joven.getInfo().getCedula() + "\n" +
-                                    "Fecha de Nacimiento: " + joven.getInfo().getFechaNacimiento());
+                            JOptionPane.showMessageDialog(null, "Familiar mas joven:\n"
+                                    + "Nombre: " + joven.getInfo().getNombre() + "\n"
+                                    + "Cedula: " + joven.getInfo().getCedula() + "\n"
+                                    + "Fecha de Nacimiento: " + joven.getInfo().getFechaNacimiento());
                         }
                     }
                     break;
@@ -138,9 +138,9 @@ public class ProyectoLista {
                     } else {
                         Nodo mayorGrado = arbol.getNodoMayorGrado();
                         if (mayorGrado != null) {
-                            JOptionPane.showMessageDialog(null, "Persona con mayor numero de hijos directos:\n" +
-                                    "Nombre: " + mayorGrado.getInfo().getNombre() + "\n" +
-                                    "Cedula: " + mayorGrado.getInfo().getCedula());
+                            JOptionPane.showMessageDialog(null, "Persona con mayor numero de hijos directos:\n"
+                                    + "Nombre: " + mayorGrado.getInfo().getNombre() + "\n"
+                                    + "Cedula: " + mayorGrado.getInfo().getCedula());
                         } else {
                             JOptionPane.showMessageDialog(null, "No se pudo determinar.");
                         }
@@ -166,23 +166,74 @@ public class ProyectoLista {
                     } else {
                         Nodo masProfundo = arbol.getNodoMayorNivel();
                         if (masProfundo != null) {
-                            JOptionPane.showMessageDialog(null, "Persona que se encuentra mas profunda en el arbol:\n" +
-                                    "Nombre: " + masProfundo.getInfo().getNombre() + "\n" +
-                                    "Cedula: " + masProfundo.getInfo().getCedula());
+                            JOptionPane.showMessageDialog(null, "Persona que se encuentra mas profunda en el arbol:\n"
+                                    + "Nombre: " + masProfundo.getInfo().getNombre() + "\n"
+                                    + "Cedula: " + masProfundo.getInfo().getCedula());
                         }
                     }
                     break;
-                    case 12: // Trasladar Rama (Adopción)
+                case 12: // Trasladar Rama (Adopción)
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El árbol está vacío.");
                     } else {
                         String cedulaA = JOptionPane.showInputDialog("Digite la cédula de la persona (A) que será trasladada con su descendencia:");
                         String cedulaB = JOptionPane.showInputDialog("Digite la cédula de la persona (B) que será el nuevo padre adoptivo:");
-                        
+
                         arbol.trasladarRama(cedulaA, cedulaB);
                     }
                     break;
+                case 13: //Ancestro comun mas cercano
 
+                    // Pedir la primera cédula
+                    String cedula1 = JOptionPane.showInputDialog(null,
+                            "Ingrese la cédula de la PRIMERA persona:",
+                            "Buscar Ancestro Común",
+                            JOptionPane.QUESTION_MESSAGE);
+
+                    // Validar si el usuario presionó 'Cancelar' o dejó en blanco
+                    if (cedula1 == null || cedula1.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Operación cancelada o cédula vacía.");
+                        break;
+                    }
+
+                    // Pedir la segunda cédula
+                    String cedula2 = JOptionPane.showInputDialog(null,
+                            "Ingrese la cédula de la SEGUNDA persona:",
+                            "Buscar Ancestro Común",
+                            JOptionPane.QUESTION_MESSAGE);
+
+                    // Validar la segunda entrada
+                    if (cedula2 == null || cedula2.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Operación cancelada o cédula vacía.");
+                        break;
+                    }
+
+                    // Llamamos al método
+                    // OJO: Como tu método 'ancestroComunMasCercano' actualmente usa System.out.println,
+                    // la respuesta se verá en la consola de texto, no en una ventana.
+                    System.out.println("\n--- ANCESTRO COMÚN MÁS CERCANO ---");
+                    arbol.ancestroComunMasCercano(arbol.getRaiz(), cedula1.trim(), cedula2.trim());
+
+                    break;
+                case 14:
+                    // Validamos si la raíz es nula antes de intentar graficar
+                    if (arbol.getRaiz() == null) {
+                        JOptionPane.showMessageDialog(null,
+                                "El árbol genealógico está vacío. No hay datos para mostrar.",
+                                "Árbol Vacío",
+                                JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        VisualizadorArbol ventana = new VisualizadorArbol(arbol.getRaiz());
+                        ventana.setVisible(true);
+                        ventana.toFront();
+
+                        // Pausamos la repetición del menú hasta que el usuario decida cerrarla o continuar
+                        JOptionPane.showMessageDialog(null,
+                                "El árbol está desplegado en pantalla.\nPresiona ACEPTAR cuando quieras volver al menú principal.",
+                                "Visualizando Árbol",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    break;
                 case 0:
                     System.out.println("Saliendo del programa...");
                     break;
@@ -206,6 +257,9 @@ public class ProyectoLista {
                 + "9. Consultar Nodo con Mayor Grado (más hijos)\n"
                 + "10. Consultar Registros por Nivel\n"
                 + "11. Consultar Nodo con Mayor Nivel (más profundo)\n"
+                + "12. Trasladar rama \n"
+                + "13. Consultar Ancestro común más cercano entre 2 personas\n"
+                + "14. Visualizar el arbol de forma gráfica\n"
                 + "0. Salir\n"
                 + "Selecciona una opción: "));
 

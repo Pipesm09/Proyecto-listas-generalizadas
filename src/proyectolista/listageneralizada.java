@@ -53,13 +53,17 @@ public class listageneralizada {
             return;
         }
 
-        // Si el padre todavía no tiene hijos (su ligalista está vacío)
+        // 1. Si el padre todavía no tiene hijos (es su primer hijo)
         if (padre.getLigalista() == null) {
             padre.setLigalista(nuevo);
+            padre.setSw(true); // ponemos sw = true porque el padre ya tiene hijo
             return;
         }
 
-        // El primer hijo está directamente en la ligalista del padre
+        // Aseguramos que el padre mantenga su switch en true
+        padre.setSw(true);
+
+        // 2. Insertar en la lista ordenada de hijos por cédula
         Nodo primerHijo = padre.getLigalista();
 
         long cedulaNueva = Long.parseLong(cedula);
@@ -92,22 +96,24 @@ public class listageneralizada {
     }
 
     public Nodo buscarNodo(Nodo actual, String cedula) {
-
-        if (actual == null) {
+        if (actual == null || cedula == null) {
             return null;
         }
 
-        if (!actual.isSw()
-                && actual.getInfo().getCedula().equals(cedula)) {
+        // 1. ¿Es el nodo actual?
+        if (actual.getInfo() != null && actual.getInfo().getCedula().trim().equals(cedula.trim())) {
             return actual;
         }
 
-        Nodo encontrado = buscarNodo(actual.getLigalista(), cedula);
-
-        if (encontrado != null) {
-            return encontrado;
+        // 2. Buscar abajo en los hijos
+        if (actual.getLigalista() != null) {
+            Nodo encontrado = buscarNodo(actual.getLigalista(), cedula);
+            if (encontrado != null) {
+                return encontrado; // Lo halló en la descendencia
+            }
         }
 
+        // 3. Si no estuvo en sus hijos, buscar a la derecha en los hermanos
         return buscarNodo(actual.getLiga(), cedula);
     }
 
@@ -876,7 +882,7 @@ public class listageneralizada {
         }
         return false;
     }
-    
+
     public void ancestroComunMasCercano(Nodo raiz, String cedula1, String cedula2) {
         Nodo persona1 = buscarNodo(raiz, cedula1);
         Nodo persona2 = buscarNodo(raiz, cedula2);
@@ -887,30 +893,29 @@ public class listageneralizada {
             return;
         }
 
-        // Empezamos asumiendo que el ancestro a evaluar es la persona 1 misma
         Nodo ancestro1 = persona1;
 
         // Ciclo externo: Sube por el linaje de la persona 1
         while (ancestro1 != null) {
-            
+
             // Para cada nivel de la persona 1, evaluamos a la persona 2 desde abajo hacia arriba
             Nodo ancestro2 = persona2;
 
             // Ciclo interno: Sube por el linaje de la persona 2
             while (ancestro2 != null) {
-                
+
                 // Si en algún momento son la misma persona, ¡encontramos la intersección!
                 if (ancestro1.getInfo().getCedula().equals(ancestro2.getInfo().getCedula())) {
-                    System.out.println("\nEl ancestro común más cercano entre " + persona1.getInfo().getNombre() + 
-                                       " y " + persona2.getInfo().getNombre() + " es:");
+                    System.out.println("\nEl ancestro común más cercano entre " + persona1.getInfo().getNombre()
+                            + " y " + persona2.getInfo().getNombre() + " es:");
                     System.out.println("-> " + ancestro1.getInfo().getNombre() + " (Cédula: " + ancestro1.getInfo().getCedula() + ")");
                     return; // Terminamos el método aquí porque ya hallamos el más cercano
                 }
-                
+
                 // Subimos un nivel en la familia de la persona 2 (buscamos a su padre)
                 ancestro2 = buscarPadre(raiz, ancestro2.getInfo().getCedula());
             }
-            
+
             // Subimos un nivel en la familia de la persona 1 (buscamos a su padre)
             ancestro1 = buscarPadre(raiz, ancestro1.getInfo().getCedula());
         }
