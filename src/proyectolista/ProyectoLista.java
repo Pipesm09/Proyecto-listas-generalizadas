@@ -92,9 +92,7 @@ public class ProyectoLista {
                     }
                     break;
 
-                // =========================================================
                 // NUEVOS CASOS: Los que yo CLARAMENTE hice
-                // =========================================================
                 case 6: // Altura del Árbol
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacío.");
@@ -215,7 +213,20 @@ public class ProyectoLista {
                     arbol.ancestroComunMasCercano(arbol.getRaiz(), cedula1.trim(), cedula2.trim());
 
                     break;
-                case 14:
+                case 14: // Eliminar Nivel completo
+                    if (arbol.getRaiz() == null) {
+                        JOptionPane.showMessageDialog(null, "El árbol está vacío.");
+                    } else {
+                        String nivelStr = JOptionPane.showInputDialog("Digite el número de nivel que desea eliminar (Ej. 2, 3...):");
+                        try {
+                            int nivelAEliminar = Integer.parseInt(nivelStr);
+                            arbol.eliminarNivel(nivelAEliminar);
+                        } catch (NumberFormatException e) {
+                            JOptionPane.showMessageDialog(null, "Por favor, ingrese un número válido.");
+                        }
+                    }
+                    break;
+                case 15:
                     // Validamos si la raíz es nula antes de intentar graficar
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null,
@@ -259,7 +270,8 @@ public class ProyectoLista {
                 + "11. Consultar Nodo con Mayor Nivel (más profundo)\n"
                 + "12. Trasladar rama \n"
                 + "13. Consultar Ancestro común más cercano entre 2 personas\n"
-                + "14. Visualizar el arbol de forma gráfica\n"
+                + "14. Eliminar nivel (Conservando linaje)\n"
+                + "15. Visualizar el arbol de forma gráfica\n"
                 + "0. Salir\n"
                 + "Selecciona una opción: "));
 

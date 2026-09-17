@@ -923,5 +923,80 @@ public class listageneralizada {
         // Si los ciclos terminan y no hubo coincidencias (raro si todos vienen de la misma raíz)
         System.out.println("No tienen ningún ancestro en común.");
     }
+    //eliminar nivel, enlazar los nietos a sus abuelos
+    public void eliminarNivel(int nivelAEliminar) {
+        if (raiz == null) {
+            JOptionPane.showMessageDialog(null, "El árbol está vacío.");
+            return;
+        }
+
+        if (nivelAEliminar <= 1) {
+            JOptionPane.showMessageDialog(null, "No se puede eliminar el nivel 1 (La Raíz principal del árbol).");
+            return;
+        }
+
+        // Validamos que el nivel exista antes de intentar borrar
+        int alturaMaxima = obtenerAltura(raiz);
+        if (nivelAEliminar > alturaMaxima) {
+            JOptionPane.showMessageDialog(null, "El nivel ingresado no existe en el árbol. La altura máxima es: " + alturaMaxima);
+            return;
+        }
+
+        // Ejecutamos la lógica de puenteo en el nivel (nivelAEliminar - 1)
+        procesarEliminacionNivel(raiz, 1, nivelAEliminar);
+        JOptionPane.showMessageDialog(null, "Nivel " + nivelAEliminar + " eliminado con éxito. Los descendientes han ascendido.");
+    }
+
+    /**
+     * Método recursivo que se detiene en los padres (nivel - 1) para conectar a los abuelos con los nietos.
+     */
+    private void procesarEliminacionNivel(Nodo actual, int nivelActual, int nivelBuscado) {
+        if (actual == null) return;
+
+        // Si estamos exactamente en el nivel ANTERIOR al que se va a eliminar (los padres)
+        if (nivelActual == nivelBuscado - 1) {
+            Nodo hijoDirecto = actual.getLigalista(); // Estos son los nodos del nivel a eliminar
+            Nodo nuevaListaHijos = null;
+            Nodo ultimoHijoAgregado = null;
+
+            // Iteramos sobre los hijos del nodo actual (los que van a desaparecer)
+            while (hijoDirecto != null) {
+                // Para cada nodo que se va a eliminar, rescatamos a SUS propios hijos (los nietos)
+                Nodo nietosDelInfortunado = hijoDirecto.getLigalista();
+
+                while (nietosDelInfortunado != null) {
+                    Nodo siguienteNieto = nietosDelInfortunado.getLiga();
+                    nietosDelInfortunado.setLiga(null); // Desconectamos al nieto temporalmente
+
+                    // Los unimos en una nueva lista de hijos adoptados para el abuelo (actual)
+                    if (nuevaListaHijos == null) {
+                        nuevaListaHijos = nietosDelInfortunado;
+                        ultimoHijoAgregado = nietosDelInfortunado;
+                    } else {
+                        ultimoHijoAgregado.setLiga(nietosDelInfortunado);
+                        ultimoHijoAgregado = nietosDelInfortunado; // Avanzamos el puntero del último
+                    }
+
+                    nietosDelInfortunado = siguienteNieto;
+                }
+
+                hijoDirecto = hijoDirecto.getLiga(); // Pasamos al siguiente hijo a eliminar
+            }
+
+            // El abuelo ('actual') adopta directamente a los nietos, puenteando a los padres del medio
+            if (nuevaListaHijos != null) {
+                actual.setLigalista(nuevaListaHijos);
+            } else {
+                // Si los nodos a eliminar no tenían hijos (eran hojas de ese nivel), la ligalista del abuelo pasa a ser null
+                actual.setLigalista(null);
+            }
+        }
+
+        // Continuamos barriendo el árbol recursivamente hacia abajo (hijos) y hacia los lados (hermanos)
+        if (nivelActual < nivelBuscado - 1) {
+            procesarEliminacionNivel(actual.getLigalista(), nivelActual + 1, nivelBuscado);
+        }
+        procesarEliminacionNivel(actual.getLiga(), nivelActual, nivelBuscado);
+    }
 
 }
