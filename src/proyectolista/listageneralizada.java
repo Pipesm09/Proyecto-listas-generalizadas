@@ -332,26 +332,26 @@ public class listageneralizada {
         // Acá vamos a buscar entre todos los hermanos del nivel
         while (aux != null) {
 
-            // Si encontramos un nodo con sw = true, buscamos entre sus hijos
-            if (aux.isSw()) {
+            // En lugar de isSw(), miramos directo si tiene descendencia
+            if (aux.getLigalista() != null) {
                 Nodo hijo = aux.getLigalista();
 
-                // Buscamos si uno de sus hijos es al que le estamos buscando el señor padre
+                // Buscamos si uno de sus hijos es al que le estamos buscando el padre
                 while (hijo != null) {
                     if (hijo.getInfo().getCedula().equals(cedula)) {
-                        return aux; // Si encuentra al papa devuelve el Nodo donde esta parado el puntero
+                        return aux; // Si encuentra al papá devuelve el Nodo
                     }
-                    hijo = hijo.getLiga(); // Sino pues sigue revisando los otros hijos de la misma sublista
+                    hijo = hijo.getLiga();
                 }
 
-                // Si no está en los hijos directos, toca buscar en los nietos y ubica los punteros en el siguiente nivel
+                // Si no está en los hijos directos, buscamos en los nietos (siguiente nivel)
                 Nodo encontrado = buscarPadre(aux.getLigalista(), cedula);
                 if (encontrado != null) {
                     return encontrado;
                 }
             }
 
-            // Si no estaba por esa rama, nos vamos al siguiente hermano del nivel a verle los hijos
+            // Si no estaba por esa rama, pasamos al siguiente hermano
             aux = aux.getLiga();
         }
 
@@ -379,7 +379,6 @@ public class listageneralizada {
     public boolean buscarEnSublista(Nodo actual, String cedula) {
         Nodo aux = actual;
         while (aux != null) {
-            // Ya no se niega el SW, cualquier nodo en la lista es una persona válida
             if (aux.getInfo().getCedula().equals(cedula)) {
                 return true;
             }
@@ -389,14 +388,13 @@ public class listageneralizada {
     }
 
     public void mostrarHijos(Nodo persona) {
-        // Verificamos que la persona tenga hijos con sw o ligalista
-        if (!persona.isSw() || persona.getLigalista() == null) {
+        // Verificamos directamente si la ligalista es nula
+        if (persona.getLigalista() == null) {
             System.out.println("No tiene hijos.");
             return;
         }
 
         Nodo hijo = persona.getLigalista();
-        // Pasamos por todos los nodos de la sublista y los mostramos
         while (hijo != null) {
             System.out.println("- " + hijo.getInfo().getNombre() + " (Cédula: " + hijo.getInfo().getCedula() + ")");
             hijo = hijo.getLiga();
@@ -404,7 +402,7 @@ public class listageneralizada {
     }
 
     public void mostrarHijosAux(Nodo persona) {
-        if (persona.isSw()) {
+        if (persona.getLigalista() != null) {
             Nodo hijo = persona.getLigalista();
             while (hijo != null) {
                 System.out.println("- " + hijo.getInfo().getNombre() + " (Cédula: " + hijo.getInfo().getCedula() + ")");
@@ -414,17 +412,15 @@ public class listageneralizada {
     }
 
     public void mostrarHermanos(Nodo padre, String cedulaConsultada) {
-        if (padre == null || !padre.isSw()) {
+        if (padre == null || padre.getLigalista() == null) {
             System.out.println("No tiene hermanos.");
             return;
         }
 
-        // Los hermanos de la persona son los hijos de su padre
         Nodo hermano = padre.getLigalista();
         boolean hay = false;
 
         while (hermano != null) {
-            // Se muestra a todos excepto a la persona consultada
             if (!hermano.getInfo().getCedula().equals(cedulaConsultada)) {
                 System.out.println("- " + hermano.getInfo().getNombre() + " (Cédula: " + hermano.getInfo().getCedula() + ")");
                 hay = true;
@@ -438,7 +434,7 @@ public class listageneralizada {
     }
 
     public Nodo buscarHermanos(Nodo padre, String cedula) {
-        if (padre == null || !padre.isSw()) {
+        if (padre == null || padre.getLigalista() == null) {
             return null;
         }
 
@@ -462,12 +458,11 @@ public class listageneralizada {
         }
 
         Nodo abuelo = buscarPadre(raiz, padre.getInfo().getCedula());
-        if (abuelo == null || !abuelo.isSw()) {
+        if (abuelo == null || abuelo.getLigalista() == null) {
             System.out.println("No tiene tios registrados (no se halló el abuelo).");
             return;
         }
 
-        // Los tios son los hijos del abuelo (excluyendo al padre)
         Nodo tio = abuelo.getLigalista();
         boolean tieneTios = false;
 
@@ -487,10 +482,9 @@ public class listageneralizada {
     }
 
     public void mostrarSobrinos(Nodo persona) {
-        // Asumiendo que 'raiz' es un atributo global de la clase
         Nodo padre = buscarPadre(raiz, persona.getInfo().getCedula());
 
-        if (padre == null || !padre.isSw()) {
+        if (padre == null || padre.getLigalista() == null) {
             System.out.println("No tiene sobrinos (no tiene hermanos registrados).");
             return;
         }
@@ -499,11 +493,10 @@ public class listageneralizada {
         boolean tieneSobrinos = false;
 
         while (hermano != null) {
-            // Solo miramos a los hermanos (excluimos a la propia persona)
             if (!hermano.getInfo().getCedula().equals(persona.getInfo().getCedula())) {
 
-                // Si el hermano tiene hijos (switch en true), iteramos sus hijos
-                if (hermano.isSw()) {
+                // Miramos directamente si el hermano tiene hijos en su ligalista
+                if (hermano.getLigalista() != null) {
                     Nodo sobrino = hermano.getLigalista();
                     while (sobrino != null) {
                         System.out.println("- " + sobrino.getInfo().getNombre()
@@ -522,11 +515,8 @@ public class listageneralizada {
         }
     }
 
-    // ====================================================
-    // MÉTODOS ADICIONALES (Primos, Ancestros, Descendientes)
-    // ====================================================
     public void mostrarPrimos(Nodo abuelo, String cedulaPadre) {
-        if (abuelo == null || !abuelo.isSw()) {
+        if (abuelo == null || abuelo.getLigalista() == null) {
             return;
         }
 
@@ -534,9 +524,8 @@ public class listageneralizada {
         boolean hayPrimos = false;
 
         while (tio != null) {
-            // Buscamos hijos en los tíos (omitimos al padre de la persona)
             if (!tio.getInfo().getCedula().equals(cedulaPadre)) {
-                if (tio.isSw()) {
+                if (tio.getLigalista() != null) {
                     Nodo primo = tio.getLigalista();
                     while (primo != null) {
                         System.out.println("- " + primo.getInfo().getNombre() + " (Cédula: " + primo.getInfo().getCedula() + ")");
@@ -567,7 +556,7 @@ public class listageneralizada {
     }
 
     public void mostrarDescendientes(Nodo persona) {
-        if (!persona.isSw() || persona.getLigalista() == null) {
+        if (persona.getLigalista() == null) {
             System.out.println("No tiene descendientes.");
             return;
         }
@@ -576,7 +565,6 @@ public class listageneralizada {
 
     private void mostrarDescendientesRecursivo(Nodo actual, int nivel) {
         while (actual != null) {
-            // Creamos un espaciado para representar el árbol visualmente
             String espacio = "";
             for (int i = 0; i < nivel; i++) {
                 espacio += "  ";
@@ -584,8 +572,7 @@ public class listageneralizada {
 
             System.out.println(espacio + "- " + actual.getInfo().getNombre() + " (Cédula: " + actual.getInfo().getCedula() + ")");
 
-            // Si tiene hijos, llamamos recursivamente aumentando el nivel visual
-            if (actual.isSw()) {
+            if (actual.getLigalista() != null) {
                 mostrarDescendientesRecursivo(actual.getLigalista(), nivel + 1);
             }
             actual = actual.getLiga();
