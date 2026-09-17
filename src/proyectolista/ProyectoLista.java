@@ -95,13 +95,13 @@ public class ProyectoLista {
 
                 case 6: // Familiar más joven
                     if (arbol.getRaiz() == null) {
-                        JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
+                        JOptionPane.showMessageDialog(null, "El árbol está vacío.");
                     } else {
-                        Nodo joven = arbol.encontrarMasJoven(arbol.getRaiz(), null);
+                        Nodo joven = arbol.getNodoMasJoven(); // Llamamos al método seguro
                         if (joven != null) {
-                            JOptionPane.showMessageDialog(null, "Familiar mas joven:\n"
+                            JOptionPane.showMessageDialog(null, "Familiar más joven:\n"
                                     + "Nombre: " + joven.getInfo().getNombre() + "\n"
-                                    + "Cedula: " + joven.getInfo().getCedula() + "\n"
+                                    + "Cédula: " + joven.getInfo().getCedula() + "\n"
                                     + "Fecha de Nacimiento: " + joven.getInfo().getFechaNacimiento());
                         }
                     }

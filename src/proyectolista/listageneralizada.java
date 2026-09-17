@@ -627,24 +627,37 @@ public class listageneralizada {
     }
 
     //Familiar mas joven 
-    public Nodo encontrarMasJoven(Nodo actual, Nodo masJovenActual) {
+public Nodo getNodoMasJoven() {
+        return encontrarFamiliarMasJoven(raiz);
+    }
+
+    private Nodo encontrarFamiliarMasJoven(Nodo actual) {
         if (actual == null) {
-            return masJovenActual; //para desapilar
+            return null;
         }
-        //toca ver entre TODO el arbol para ver quien es el que tiene menos edad, para eso el actual
+
+        Nodo masJoven = null;
+
+        // Si el nodo actual es válido, lo tomamos temporalmente como candidato
         if (!actual.isSw()) {
-            if (masJovenActual == null) {
-                masJovenActual = actual;
-            } else {
-                //hace que se compare el actual sea MENOR que el masJovenActual
-                if (actual.getInfo().getFechaNacimiento().isAfter(masJovenActual.getInfo().getFechaNacimiento())) {
-                    masJovenActual = actual;
-                }
+            masJoven = actual;
+        }
+
+        Nodo jovenEnHijos = encontrarFamiliarMasJoven(actual.getLigalista());
+        if (jovenEnHijos != null) {
+            if (masJoven == null || jovenEnHijos.getInfo().getFechaNacimiento().isAfter(masJoven.getInfo().getFechaNacimiento())) {
+                masJoven = jovenEnHijos;
             }
         }
-        //buscar entre las sublistas
-        masJovenActual = encontrarMasJoven(actual.getLigalista(), masJovenActual);
-        return masJovenActual;
+
+        Nodo jovenEnHermanos = encontrarFamiliarMasJoven(actual.getLiga());
+        if (jovenEnHermanos != null) {
+            if (masJoven == null || jovenEnHermanos.getInfo().getFechaNacimiento().isAfter(masJoven.getInfo().getFechaNacimiento())) {
+                masJoven = jovenEnHermanos;
+            }
+        }
+
+        return masJoven;
     }
     //Nodo con mayor grado, padre con mas hijos xd
     //variables globales, porque que pereza hacer otros metodos
