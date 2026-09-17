@@ -15,14 +15,6 @@ public class Nodo {
         this.liga = null;
     }
 
-    // constructor nodo de sublista
-    public Nodo() {
-        this.info = null;
-        this.sw = true;
-        this.ligalista = null;
-        this.liga = null;
-    }
-
     public boolean isSw() {
         return sw;
     }

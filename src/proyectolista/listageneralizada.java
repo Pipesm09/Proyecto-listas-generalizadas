@@ -45,6 +45,7 @@ public class listageneralizada {
         Persona persona = new Persona(cedula, fecha, nombre);
         Nodo nuevo = new Nodo(persona);
 
+        // Buscamos al nodo padre en todo el árbol
         Nodo padre = buscarNodo(raiz, cedulaPadre);
 
         if (padre == null) {
@@ -53,30 +54,26 @@ public class listageneralizada {
             return;
         }
 
-        // 1. Si el padre todavía no tiene hijos (es su primer hijo)
+        // 1. Si el padre todavía NO tiene hijos (su ligalista está vacío)
         if (padre.getLigalista() == null) {
-            padre.setLigalista(nuevo);
-            padre.setSw(true); // ponemos sw = true porque el padre ya tiene hijo
+            padre.setLigalista(nuevo); // El nuevo nodo es el primer hijo directo
             return;
         }
 
-        // Aseguramos que el padre mantenga su switch en true
-        padre.setSw(true);
-
-        // 2. Insertar en la lista ordenada de hijos por cédula
+        // 2. Si ya tiene hijos, el primer hijo está directamente en la ligalista del padre
         Nodo primerHijo = padre.getLigalista();
 
         long cedulaNueva = Long.parseLong(cedula);
         long cedulaPrimerHijo = Long.parseLong(primerHijo.getInfo().getCedula());
 
-        // Insertar como el nuevo primer hijo (si su cédula es menor)
+        // 3. Insertar como el nuevo primer hijo (si su cédula es menor numéricamente)
         if (cedulaNueva < cedulaPrimerHijo) {
             nuevo.setLiga(primerHijo);
             padre.setLigalista(nuevo);
             return;
         }
 
-        // Buscar la posición correcta entre los hermanos usando la 'liga'
+        // 4. Buscar la posición correcta entre los hermanos usando la 'liga'
         Nodo anterior = primerHijo;
         Nodo actual = anterior.getLiga();
 
@@ -91,6 +88,7 @@ public class listageneralizada {
             actual = actual.getLiga();
         }
 
+        // Insertamos en medio o al final de la lista de hermanos
         nuevo.setLiga(actual);
         anterior.setLiga(nuevo);
     }
@@ -115,59 +113,6 @@ public class listageneralizada {
 
         // 3. Si no estuvo en sus hijos, buscar a la derecha en los hermanos
         return buscarNodo(actual.getLiga(), cedula);
-    }
-
-    public static void visualizarArbol(Nodo x, int nivel) {
-        if (x == null) {
-            return;
-        }
-        if (!x.isSw()) {
-            Persona p = x.getInfo();
-            imprimirSangria(nivel);
-            System.out.println("└── " + p.getNombre() + " (ID: " + p.getCedula() + ")");
-        }
-
-        Nodo aux = x.getLiga();
-        while (aux != null) {
-            if (!aux.isSw()) {
-                Persona p = aux.getInfo();
-                imprimirSangria(nivel + 1);
-                System.out.println("├── " + p.getNombre() + " (ID: " + p.getCedula() + ")");
-            } else {
-                visualizarArbol(aux.getLigalista(), nivel + 1);
-            }
-            aux = aux.getLiga();
-        }
-    }
-
-    private static void imprimirSangria(int nivel) {
-        for (int i = 0; i < nivel; i++) {
-            System.out.print("    ");
-        }
-    }
-
-    public static void imprimirComoLista(Nodo x) {
-        if (x == null) {
-            System.out.print("()");
-            return;
-        }
-
-        System.out.print("(");
-        Nodo aux = x;
-        while (aux != null) {
-            if (!aux.isSw()) {
-                Persona p = (Persona) aux.getInfo();
-                System.out.print(p.getNombre());
-            } else {
-                imprimirComoLista(aux.getLigalista());
-            }
-
-            aux = aux.getLiga();
-            if (aux != null) {
-                System.out.print(",");
-            }
-        }
-        System.out.print(")");
     }
 
     public void actualizarPersona(String cedulaActual, String nuevoNombre, String nuevaCedula, String nuevaFechaNacimiento) {
@@ -649,23 +594,30 @@ public class listageneralizada {
 
     //altura del arbol
     public int obtenerAltura(Nodo actual) {
-        //validacion para que desapile
         if (actual == null) {
             return 0;
         }
-        int maxAlturaHijos = 0;
+
+        int maxSubArbolAltura = 0;
+
+        // Recorremos todos los hijos directos de este nodo.
+        // El primer hijo se obtiene con 'ligalista', y los demás hermanos con 'liga'.
         Nodo hijo = actual.getLigalista();
-        //recorrer la lista rama por rana
         while (hijo != null) {
-            if (!hijo.isSw()) {//esto indica que si el hijo NO es una sublista entonces
-                int alturahijo = obtenerAltura(hijo);
-                if (alturahijo > maxAlturaHijos) {
-                    maxAlturaHijos = alturahijo; //actualiza en caso que el siguiente hijo sea mayor, asi recursivamente
+            if (!hijo.isSw()) {
+                // Calculamos recursivamente la altura de la rama de este hijo
+                int alturaRamaHijo = obtenerAltura(hijo);
+
+                // Nos quedamos con la rama más larga de entre todos los hijos
+                if (alturaRamaHijo > maxSubArbolAltura) {
+                    maxSubArbolAltura = alturaRamaHijo;
                 }
             }
-            hijo = hijo.getLiga(); //avanzar por los hermanos, verificando su altura
+            hijo = hijo.getLiga(); // Pasamos al siguiente hermano (siguiente hijo del mismo padre)
         }
-        return 1 + maxAlturaHijos;
+
+        // La altura total desde este nodo es 1 (él mismo) + la altura de su rama de hijos más profunda
+        return 1 + maxSubArbolAltura;
     }
 
     //nivel de un registro
@@ -923,6 +875,7 @@ public class listageneralizada {
         // Si los ciclos terminan y no hubo coincidencias (raro si todos vienen de la misma raíz)
         System.out.println("No tienen ningún ancestro en común.");
     }
+
     //eliminar nivel, enlazar los nietos a sus abuelos
     public void eliminarNivel(int nivelAEliminar) {
         if (raiz == null) {
@@ -948,10 +901,13 @@ public class listageneralizada {
     }
 
     /**
-     * Método recursivo que se detiene en los padres (nivel - 1) para conectar a los abuelos con los nietos.
+     * Método recursivo que se detiene en los padres (nivel - 1) para conectar a
+     * los abuelos con los nietos.
      */
     private void procesarEliminacionNivel(Nodo actual, int nivelActual, int nivelBuscado) {
-        if (actual == null) return;
+        if (actual == null) {
+            return;
+        }
 
         // Si estamos exactamente en el nivel ANTERIOR al que se va a eliminar (los padres)
         if (nivelActual == nivelBuscado - 1) {

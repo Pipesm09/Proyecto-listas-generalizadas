@@ -51,30 +51,7 @@ public class ProyectoLista {
                         }
                     }
                     break;
-
                 case 2:
-                    System.out.println("\n--- REPRESENTACION COMO LISTA GENERALIZADA ---");
-                    // CORREGIDO: Evaluamos arbol.getRaiz() en lugar de la variable local raiz
-                    if (arbol.getRaiz() == null) {
-                        System.out.println("No hay ningun arbol cargado en memoria.");
-                    } else {
-                        System.out.print("Estructura: ");
-                        listageneralizada.imprimirComoLista(arbol.getRaiz());
-                        System.out.println();
-                    }
-                    break;
-
-                case 3:
-                    System.out.println("\n--- VISUALIZACION JERARQUICA DEL ARBOL ---");
-                    // CORREGIDO: Evaluamos arbol.getRaiz()
-                    if (arbol.getRaiz() == null) {
-                        System.out.println("No hay ningun arbol cargado en memoria.");
-                    } else {
-                        listageneralizada.visualizarArbol(arbol.getRaiz(), 0);
-                    }
-                    break;
-
-                case 4:
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
                     } else {
@@ -83,7 +60,7 @@ public class ProyectoLista {
                     }
                     break;
 
-                case 5:
+                case 3:
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
                     } else {
@@ -93,7 +70,7 @@ public class ProyectoLista {
                     break;
 
                 // NUEVOS CASOS: Los que yo CLARAMENTE hice
-                case 6: // Altura del Árbol
+                case 4: // Altura del Árbol
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacío.");
                     } else {
@@ -102,7 +79,7 @@ public class ProyectoLista {
                     }
                     break;
 
-                case 7: // Nivel de un Registro
+                case 5: // Nivel de un Registro
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
                     } else {
@@ -116,7 +93,7 @@ public class ProyectoLista {
                     }
                     break;
 
-                case 8: // Familiar más joven
+                case 6: // Familiar más joven
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
                     } else {
@@ -130,7 +107,7 @@ public class ProyectoLista {
                     }
                     break;
 
-                case 9: // Nodo con Mayor Grado
+                case 7: // Nodo con Mayor Grado
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
                     } else {
@@ -145,7 +122,7 @@ public class ProyectoLista {
                     }
                     break;
 
-                case 10: // Registros por Nivel (Se imprime en la consola)
+                case 8: // Registros por Nivel (Se imprime en la consola)
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
                     } else {
@@ -158,7 +135,7 @@ public class ProyectoLista {
                     }
                     break;
 
-                case 11: // Nodo con Mayor Nivel (Más profundo)
+                case 9: // Nodo con Mayor Nivel (Más profundo)
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El arbol esta vacio.");
                     } else {
@@ -170,7 +147,7 @@ public class ProyectoLista {
                         }
                     }
                     break;
-                case 12: // Trasladar Rama (Adopción)
+                case 10: // Trasladar Rama (Adopción)
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El árbol está vacío.");
                     } else {
@@ -180,9 +157,8 @@ public class ProyectoLista {
                         arbol.trasladarRama(cedulaA, cedulaB);
                     }
                     break;
-                case 13: //Ancestro comun mas cercano
+                case 11: //Ancestro comun mas cercano
 
-                    // Pedir la primera cédula
                     String cedula1 = JOptionPane.showInputDialog(null,
                             "Ingrese la cédula de la PRIMERA persona:",
                             "Buscar Ancestro Común",
@@ -205,15 +181,11 @@ public class ProyectoLista {
                         JOptionPane.showMessageDialog(null, "Operación cancelada o cédula vacía.");
                         break;
                     }
-
-                    // Llamamos al método
-                    // OJO: Como tu método 'ancestroComunMasCercano' actualmente usa System.out.println,
-                    // la respuesta se verá en la consola de texto, no en una ventana.
                     System.out.println("\n--- ANCESTRO COMÚN MÁS CERCANO ---");
                     arbol.ancestroComunMasCercano(arbol.getRaiz(), cedula1.trim(), cedula2.trim());
 
                     break;
-                case 14: // Eliminar Nivel completo
+                case 12: // Eliminar Nivel completo
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null, "El árbol está vacío.");
                     } else {
@@ -226,7 +198,7 @@ public class ProyectoLista {
                         }
                     }
                     break;
-                case 15:
+                case 13:
                     // Validamos si la raíz es nula antes de intentar graficar
                     if (arbol.getRaiz() == null) {
                         JOptionPane.showMessageDialog(null,
@@ -258,20 +230,18 @@ public class ProyectoLista {
     public static int Menu() {
         int opc = Integer.parseInt(JOptionPane.showInputDialog("      MENÚ ÁRBOL GENEALÓGICO (N-ARIO)        \n"
                 + "1. Registrar miembros en el árbol \n"
-                + "2. Mostrar representación como Lista Generalizada \n"
-                + "3. Visualizar Árbol jerárquico \n"
-                + "4. Consultar Relaciones Familiares \n"
-                + "5. Eliminar persona (Conservando linaje)\n"
-                + "6. Consultar Altura del Árbol\n"
-                + "7. Consultar Nivel de un Registro\n"
-                + "8. Consultar Familiar más joven\n"
-                + "9. Consultar Nodo con Mayor Grado (más hijos)\n"
-                + "10. Consultar Registros por Nivel\n"
-                + "11. Consultar Nodo con Mayor Nivel (más profundo)\n"
-                + "12. Trasladar rama \n"
-                + "13. Consultar Ancestro común más cercano entre 2 personas\n"
-                + "14. Eliminar nivel (Conservando linaje)\n"
-                + "15. Visualizar el arbol de forma gráfica\n"
+                + "2. Consultar Relaciones Familiares \n"
+                + "3. Eliminar persona (Conservando linaje)\n"
+                + "4. Consultar Altura del Árbol\n"
+                + "5. Consultar Nivel de un Registro\n"
+                + "6. Consultar Familiar más joven\n"
+                + "7. Consultar Nodo con Mayor Grado (más hijos)\n"
+                + "8. Consultar Registros por Nivel\n"
+                + "9. Consultar Nodo con Mayor Nivel (más profundo)\n"
+                + "10. Trasladar rama \n"
+                + "11. Consultar Ancestro común más cercano entre 2 personas\n"
+                + "12. Eliminar nivel (Conservando linaje)\n"
+                + "13. Visualizar el arbol de forma gráfica\n"
                 + "0. Salir\n"
                 + "Selecciona una opción: "));
 
